@@ -13,6 +13,7 @@ import ajbc.doodle.calendar.daos.DaoException;
 @Aspect
 @Component
 public class MyAspect {
+	// check whats relevant
 //	@Around("execution(* ajbc.doodle.calendar.daos.ProductDao.get*(Double, Double))")
 //	public Object swapInputs(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 //		Object[] args = proceedingJoinPoint.getArgs();
