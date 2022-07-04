@@ -1,5 +1,6 @@
 package ajbc.doodle.calendar.entities;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.persistence.CascadeType;
@@ -12,37 +13,37 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+@ToString
+@NoArgsConstructor
 @Getter
 @Setter
-@AllArgsConstructor
-@ToString
 
 @Entity
-@Table(name = "notifications")
-public class Notification {
-  
+@Table(name = "events")
+public class Event {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(updatable = false, nullable = false)
 	private Integer id;
-	private LocalDateTime time;
+	
 	private String title;
-	private String message;
+	private LocalDateTime startTime;
+	private LocalDateTime endTime;
+	private String description;
 	
 	
 	@ManyToOne(cascade = {CascadeType.MERGE})
-	@JoinColumn(name="userId")
-	private User user;
+	@JoinColumn(name="id")
+	private User owner;
 	
-	@ManyToOne(cascade = {CascadeType.MERGE})
-	@JoinColumn(name="eventId")
-	private Event event;
- 
-	private boolean wasSent; //default=false
 	private boolean isActive; //default=true
+
+	
+	
 }
