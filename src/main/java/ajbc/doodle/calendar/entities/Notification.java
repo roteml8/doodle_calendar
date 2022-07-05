@@ -30,10 +30,12 @@ public class Notification {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(updatable = false, nullable = false)
 	private Integer id;
-	private LocalDateTime time;
-	private String title;
-	private String message;
+	private LocalDateTime timing;
 	
+	@Column(insertable = false, updatable = false)
+	private Integer userId;
+	@Column(insertable = false, updatable = false)
+	private Integer eventId;
 	
 	@ManyToOne(cascade = {CascadeType.MERGE})
 	@JoinColumn(name="userId")
@@ -43,6 +45,6 @@ public class Notification {
 	@JoinColumn(name="eventId")
 	private Event event;
  
-	private boolean wasSent; //default=false
-	private boolean isActive; //default=true
+	private int wasSent; //default=0
+	private int isActive; //default=1
 }

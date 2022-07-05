@@ -33,7 +33,17 @@ public class User {
 	private String email;
 	private LocalDate birthDate;
 	private LocalDate joinDate;
-	private boolean isActive; // default=true
+	private int isActive; // default=1
+	
+	
+	public User(String firstName, String lastName, String email, LocalDate birthDate, LocalDate joinDate) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.birthDate = birthDate;
+		this.joinDate = joinDate;
+		this.isActive = 1;
+	}
 
 	
 

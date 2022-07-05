@@ -37,12 +37,23 @@ public class Event {
 	private LocalDateTime endTime;
 	private String description;
 	
+	@Column(insertable = false, updatable = false)
+	private Integer ownerId;
 	
 	@ManyToOne(cascade = {CascadeType.MERGE})
-	@JoinColumn(name="id")
+	@JoinColumn(name="ownerId")
 	private User owner;
 	
-	private boolean isActive; //default=true
+	private int isActive; //default=1
+
+	public Event(String title, LocalDateTime startTime, LocalDateTime endTime, String description, Integer ownerId) {
+		this.title = title;
+		this.startTime = startTime;
+		this.endTime = endTime;
+		this.description = description;
+		this.ownerId = ownerId;
+		this.isActive = 1;
+	}
 
 	
 	
