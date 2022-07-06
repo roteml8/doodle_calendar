@@ -32,11 +32,6 @@ public class Notification {
 	private Integer id;
 	private LocalDateTime timing;
 	
-	@Column(insertable = false, updatable = false)
-	private Integer userId;
-	@Column(insertable = false, updatable = false)
-	private Integer eventId;
-	
 	@ManyToOne(cascade = {CascadeType.MERGE})
 	@JoinColumn(name="userId")
 	private User user;
@@ -47,4 +42,14 @@ public class Notification {
  
 	private int wasSent; //default=0
 	private int isActive; //default=1
+	
+	public Notification(LocalDateTime timing, User user, Event event) {
+		this.timing = timing;
+		this.user = user;
+		this.event = event;
+		this.wasSent = 0;
+		this.isActive = 1;
+	}
+	
+	
 }

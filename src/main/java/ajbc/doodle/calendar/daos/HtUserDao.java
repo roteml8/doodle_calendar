@@ -23,6 +23,14 @@ public class HtUserDao implements UserDao {
 		template.persist(user);
 	}
 
+	
+
+	@Override
+	public void updateUser(User user) throws DaoException {
+		template.merge(user);
+	}
+
+
 
 	@Override
 	public User getUser(Integer userId) throws DaoException {

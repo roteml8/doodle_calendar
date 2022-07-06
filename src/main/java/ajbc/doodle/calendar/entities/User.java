@@ -1,12 +1,18 @@
 package ajbc.doodle.calendar.entities;
 
 import java.time.LocalDate;
-
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.JoinColumn;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import lombok.Getter;
@@ -35,6 +41,8 @@ public class User {
 	private LocalDate joinDate;
 	private int isActive; // default=1
 	
+	@ManyToMany(mappedBy="users")
+	private Set<Event> events = new HashSet<>();
 	
 	public User(String firstName, String lastName, String email, LocalDate birthDate, LocalDate joinDate) {
 		this.firstName = firstName;

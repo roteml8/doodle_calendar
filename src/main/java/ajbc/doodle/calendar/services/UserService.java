@@ -30,5 +30,8 @@ public class UserService {
 		return dao.getAllUsers();
 	}
 	
-	
+	public void updateUser(User user) throws DaoException
+	{
+		dao.updateUser(user);
+	}
 }
