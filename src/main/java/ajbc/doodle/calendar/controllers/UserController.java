@@ -62,7 +62,10 @@ public class UserController {
 	public ResponseEntity<List<User>> getUsers(@RequestParam Map<String, String> map) throws DaoException {
 		List<User> list;
 		Set<String> keys = map.keySet();
-		list = service.getAllUsers();
+		if (keys.contains("eventId"))
+			list = service.getUsersByEvent(Integer.parseInt(map.get("eventId")));
+		else
+			list = service.getAllUsers();
 		if (list == null)
 			return ResponseEntity.notFound().build();
 

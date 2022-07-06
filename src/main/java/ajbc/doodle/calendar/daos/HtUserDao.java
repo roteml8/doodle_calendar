@@ -47,6 +47,14 @@ public class HtUserDao implements UserDao {
 		return (List<User>)template.findByCriteria(criteria);
 	}
 
+
+
+	@Override
+	public List<User> getUsersByEventId(Integer eventId) throws DaoException {
+		// TODO Auto-generated method stub
+		return UserDao.super.getUsersByEventId(eventId);
+	}
+
 	
 	
 	

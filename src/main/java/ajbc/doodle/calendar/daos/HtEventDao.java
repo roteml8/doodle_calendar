@@ -3,11 +3,13 @@ package ajbc.doodle.calendar.daos;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.stereotype.Component;
 
 import ajbc.doodle.calendar.entities.Event;
+import ajbc.doodle.calendar.entities.User;
 
 @SuppressWarnings("unchecked")
 @Component
@@ -35,6 +37,17 @@ public class HtEventDao implements EventDao{
 		DetachedCriteria criteria = DetachedCriteria.forClass(Event.class);
 		return (List<Event>)template.findByCriteria(criteria);
 	}
+
+	@Override
+	public List<Event> getEventsByUser(Integer userId) throws DaoException {
+		DetachedCriteria criteria = DetachedCriteria.forClass(Event.class);
+		criteria.createAlias("users", "user");
+		criteria.add(Restrictions.eq("user.id", userId));
+		
+		return (List<Event>)template.findByCriteria(criteria);
+		
+	}
+	
 	
 	
 }

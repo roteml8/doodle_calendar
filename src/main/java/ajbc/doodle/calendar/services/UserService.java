@@ -6,32 +6,44 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ajbc.doodle.calendar.daos.DaoException;
+import ajbc.doodle.calendar.daos.EventDao;
 import ajbc.doodle.calendar.daos.UserDao;
+import ajbc.doodle.calendar.entities.Event;
 import ajbc.doodle.calendar.entities.User;
 
 @Component
 public class UserService {
 	
 	@Autowired
-	UserDao dao;
+	UserDao userDao;
+	@Autowired
+	EventDao eventDao;
 	
 	public void addUser(User user) throws DaoException
 	{
-		dao.addUser(user);
+		user.setIsActive(1);
+		userDao.addUser(user);
 	}
 
 	public User getUser(Integer userId) throws DaoException
 	{
-		return dao.getUser(userId);
+		return userDao.getUser(userId);
 	}
 	
 	public List<User> getAllUsers() throws DaoException
 	{
-		return dao.getAllUsers();
+		return userDao.getAllUsers();
 	}
 	
 	public void updateUser(User user) throws DaoException
 	{
-		dao.updateUser(user);
+		userDao.updateUser(user);
+	}
+	
+	public List<User> getUsersByEvent(Integer eventId) throws DaoException
+	{
+		Event event = eventDao.getEvent(eventId);
+		return event.getUsers();
+		
 	}
 }

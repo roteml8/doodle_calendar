@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
 import ajbc.doodle.calendar.entities.Event;
+import ajbc.doodle.calendar.entities.User;
 
 @Transactional(rollbackFor = {DaoException.class}, readOnly = true)
 public interface EventDao {
@@ -22,4 +23,9 @@ public interface EventDao {
 		throw new DaoException("Method not implemented");
 	}
 
+	
+	
+	public default List<Event> getEventsByUser(Integer userId) throws DaoException {
+		throw new DaoException("Method not implemented");
+	}
 }

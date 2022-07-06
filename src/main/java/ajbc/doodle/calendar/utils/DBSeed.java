@@ -30,7 +30,7 @@ public class DBSeed {
 	public void seed(ContextRefreshedEvent event) throws DaoException
 	{
 		//seedUsers();
-		seedEvents();
+//		seedEvents();
 		seedNotifications();
 	}
 	
@@ -61,7 +61,7 @@ public class DBSeed {
 		LocalDateTime end = LocalDateTime.of(2023, 1, 1, 14, 30);
 		User owner = userService.getUser(5);
 		Event event1 = new Event("Appointment", start, end, "office", "appointment with boss", owner);
-		Set<User> users = Set.of(owner);
+		List<User> users = Arrays.asList(owner);
 		event1.setUsers(users);
 		
 		eventService.addEvent(event1);
@@ -71,7 +71,7 @@ public class DBSeed {
 		Event event2 = new Event("Bday Party", start2, end2, "Home", "my birthday party", owner);
 		User user2 = userService.getUser(6);
 		User user3 = userService.getUser(7);
-		Set<User> users2 = Set.of(owner, user2, user3);
+		List<User> users2 = Arrays.asList(owner, user2, user3);
 		event2.setUsers(users2);
 		
 		eventService.addEvent(event2);
