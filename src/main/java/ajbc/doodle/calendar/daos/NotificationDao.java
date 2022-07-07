@@ -23,4 +23,8 @@ public interface NotificationDao {
 		throw new DaoException("Method not implemented");
 	}
 	
+	public default Notification getNotificationById(Integer notificationId) throws DaoException {
+		throw new DaoException("Method not implemented");
+	}
+	
 }

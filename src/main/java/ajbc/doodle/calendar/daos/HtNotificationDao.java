@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import ajbc.doodle.calendar.entities.Event;
 import ajbc.doodle.calendar.entities.Notification;
+import ajbc.doodle.calendar.entities.User;
 @SuppressWarnings("unchecked")
 @Component
 public class HtNotificationDao implements NotificationDao {
@@ -40,6 +41,15 @@ public class HtNotificationDao implements NotificationDao {
 				Restrictions.eq("user.id", userId)));
 		return (List<Notification>)template.findByCriteria(criteria);
 	}
+
+	@Override
+	public Notification getNotificationById(Integer notificationId) throws DaoException {
+		Notification notification = template.get(Notification.class, notificationId);
+		if (notification ==null)
+			throw new DaoException("No Such Notification in DB");
+		return notification;
+	}
+	
 	
 	
 

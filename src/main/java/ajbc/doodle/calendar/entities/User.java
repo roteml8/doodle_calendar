@@ -54,7 +54,6 @@ public class User {
 	private int isActive; // default=1
 	
 	@ManyToMany(mappedBy="users", cascade = {CascadeType.MERGE},fetch = FetchType.EAGER)
-//	@JsonIgnore
 	private Set<Event> events = new HashSet<>();
 	
 	public User(String firstName, String lastName, String email, LocalDate birthDate, LocalDate joinDate) {

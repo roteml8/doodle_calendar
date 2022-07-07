@@ -72,7 +72,6 @@ public class Event {
 		    joinColumns = @JoinColumn(name = "eventId", referencedColumnName = "id"),
 		    inverseJoinColumns = @JoinColumn(name = "userId", referencedColumnName = "id")
 		)
-//	@JsonIgnore
 	private List<User> users = new ArrayList<>();
 	
 	private int isActive; //default=1

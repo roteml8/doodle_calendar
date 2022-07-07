@@ -3,6 +3,7 @@ package ajbc.doodle.calendar.utils;
 import java.util.List;
 
 import ajbc.doodle.calendar.entities.Event;
+import ajbc.doodle.calendar.entities.Notification;
 import ajbc.doodle.calendar.entities.User;
 
 public class JsonUtils {
@@ -34,6 +35,13 @@ public class JsonUtils {
 		event.setUsers(null);
 		event.getNotifications().forEach(u->{u.setEvent(null); u.getUser().setEvents(null);});
 	
+	}
+	
+	public static void nullifyFieldsInNotification(Notification notification)
+	{
+		notification.getEvent().setUsers(null);
+		notification.getEvent().setNotifications(null);
+		notification.getUser().setEvents(null);
 	}
 	
 }
