@@ -65,14 +65,14 @@ public class DBSeed {
 	
 	private void seedEvents() throws DaoException
 	{
-//		LocalDateTime start = LocalDateTime.of(2023, 1, 1, 14, 0);
-//		LocalDateTime end = LocalDateTime.of(2023, 1, 1, 14, 30);
-//		User owner = userService.getUser(5);
-//		Event event1 = new Event("Appointment", start, end, "office", "appointment with boss", owner);
-//		List<User> users = Arrays.asList(owner);
-//		event1.setUsers(users);
-//		
-//		eventService.addEvent(event1);
+		LocalDateTime start = LocalDateTime.of(2023, 1, 1, 14, 0);
+		LocalDateTime end = LocalDateTime.of(2023, 1, 1, 14, 30);
+		User owner = userService.getUser(5);
+		Event event1 = new Event("Appointment", start, end, "office", "appointment with boss", owner);
+		List<User> users = Arrays.asList(owner);
+		event1.setUsers(users);
+		
+		eventService.addEvent(event1);
 //		
 //		LocalDateTime start2 = LocalDateTime.of(2022, 8, 8, 20,0);
 //		LocalDateTime end2 = LocalDateTime.of(2022, 8, 8, 23,0);
@@ -83,15 +83,15 @@ public class DBSeed {
 //		event2.setUsers(users2);
 //		
 //		eventService.addEvent(event2);
-		
-		LocalDateTime start = LocalDateTime.of(2024, 1, 1, 19, 0);
-		LocalDateTime end = LocalDateTime.of(2024, 1, 1, 23, 59);
-		User owner = userService.getUser(8);
-		User user1 = userService.getUser(7);
-		List<User> users = Arrays.asList(owner, user1);
-		Event event = new Event("New Years Party", start, end, "Club", "new years party at the club", owner);
-		event.setUsers(users);
-		eventService.addEvent(event);
+//		
+//		LocalDateTime start = LocalDateTime.of(2024, 1, 1, 19, 0);
+//		LocalDateTime end = LocalDateTime.of(2024, 1, 1, 23, 59);
+//		User owner = userService.getUser(8);
+//		User user1 = userService.getUser(7);
+//		List<User> users = Arrays.asList(owner, user1);
+//		Event event = new Event("New Years Party", start, end, "Club", "new years party at the club", owner);
+//		event.setUsers(users);
+//		eventService.addEvent(event);
 
 	}
 	

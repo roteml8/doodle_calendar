@@ -48,6 +48,11 @@ public class HtEventDao implements EventDao{
 		return (List<Event>)template.findByCriteria(criteria);
 		
 	}
+
+	@Override
+	public void updateEvent(Event event) throws DaoException {
+		template.merge(event);
+	}
 	
 	
 	

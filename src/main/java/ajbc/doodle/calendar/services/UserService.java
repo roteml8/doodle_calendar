@@ -1,6 +1,10 @@
 package ajbc.doodle.calendar.services;
 
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -45,6 +49,16 @@ public class UserService {
 		Event event = eventDao.getEvent(eventId);
 		return event.getUsers();
 		
+	}
+	
+	public List<User> getUsersWithEventInRange(LocalDateTime start, LocalDateTime end) throws DaoException
+	{
+		List<Event> events = eventDao.getAllEvents();
+		events.stream().filter(t->
+			t.getStartTime().isAfter(start) && t.getEndTime().isBefore(end));
+		Set<User> users = new HashSet<>();
+		events.forEach(t->users.addAll(t.getUsers()));
+		return users.stream().collect(Collectors.toList());
 	}
 	
 	public User getUserByEmail(String email) throws DaoException

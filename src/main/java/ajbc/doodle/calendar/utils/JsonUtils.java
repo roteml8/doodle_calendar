@@ -44,4 +44,9 @@ public class JsonUtils {
 		notification.getUser().setEvents(null);
 	}
 	
+	public static void nullifyFieldsInNotificationList(List<Notification> notifications)
+	{
+		notifications.forEach(t->{t.setEvent(null);t.getUser().setEvents(null);}); 
+	}
+	
 }

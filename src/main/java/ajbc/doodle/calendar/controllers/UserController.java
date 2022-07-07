@@ -1,5 +1,6 @@
 package ajbc.doodle.calendar.controllers;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -73,6 +74,9 @@ public class UserController {
 			list = service.getUsersByEvent(Integer.parseInt(map.get("eventId")));
 		else if (keys.contains("email"))
 			list.add(service.getUserByEmail(map.get("email")));
+		else if (keys.contains("startTime") && keys.contains("endTime"))
+			list = service.getUsersWithEventInRange(LocalDateTime.parse(map.get("startTime")),
+					LocalDateTime.parse(map.get("endTime")));
 		else
 			list = service.getAllUsers();
 		if (list == null)

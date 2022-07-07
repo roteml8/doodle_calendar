@@ -1,5 +1,11 @@
 package ajbc.doodle.calendar.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ajbc.doodle.calendar.daos.DaoException;
@@ -55,4 +62,17 @@ public class NotificationController {
 		}
 	}
 
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ResponseEntity<?> getNotifications(@RequestParam Map<String, String> map) throws DaoException {
+		List<Notification> list = new ArrayList<>();
+		Set<String> keys = map.keySet();
+		if (keys.contains("eventId"))
+			list = service.getNotificationsByEvent(Integer.parseInt(map.get("eventId")));
+		if (list == null)
+			return ResponseEntity.notFound().build();
+		JsonUtils.nullifyFieldsInNotificationList(list);
+
+		return ResponseEntity.ok(list);
+	}
 }

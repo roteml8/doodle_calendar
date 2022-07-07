@@ -1,5 +1,6 @@
 package ajbc.doodle.calendar.daos;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -49,15 +50,6 @@ public class HtUserDao implements UserDao {
 		
 		return (List<User>)template.findByCriteria(criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY));
 	}
-
-
-
-	@Override
-	public List<User> getUsersByEventId(Integer eventId) throws DaoException {
-		// TODO Auto-generated method stub
-		return UserDao.super.getUsersByEventId(eventId);
-	}
-
 
 
 	@Override

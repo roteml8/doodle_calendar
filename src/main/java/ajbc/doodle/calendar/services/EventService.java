@@ -1,5 +1,6 @@
 package ajbc.doodle.calendar.services;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -42,6 +43,11 @@ public class EventService {
 
 	}
 	
+	public void updateEvent(Event event) throws DaoException
+	{
+		eventDao.updateEvent(event);
+	}
+	
 	@Transactional
 	public List<Event> getAllEvents() throws DaoException
 	{
@@ -53,6 +59,14 @@ public class EventService {
 //				e.printStackTrace();
 //			}
 //		});
+		return events;
+	}
+	
+	@Transactional
+	public List<Event> getAllEventsInRange(LocalDateTime start, LocalDateTime end) throws DaoException
+	{
+		List<Event> events = eventDao.getAllEvents();
+		events.stream().filter(t->t.getStartTime().isAfter(start) && t.getEndTime().isBefore(end));
 		return events;
 	}
 	
@@ -79,6 +93,27 @@ public class EventService {
 		return userEvents;
 	}
 
+	@Transactional
+	public Set<Event> getUpcomingEventsOfUser(Integer userId) throws DaoException
+	{
+		Set<Event> events = getEventsOfUser(userId);
+		events.stream().filter(t->t.getStartTime().isAfter(LocalDateTime.now()));
+		return events;
+	}
 	
-
+	@Transactional
+	public Set<Event> getEventsOfUserInRange(Integer userId, LocalDateTime start, LocalDateTime end) throws DaoException
+	{
+		Set<Event> events = getEventsOfUser(userId);
+		events.stream().filter(t->t.getStartTime().isAfter(start) && t.getEndTime().isBefore(end));
+		return events;
+	}
+	
+	@Transactional
+	public Set<Event> getUserEventsInNextHoursMinutes(Integer userId, int numHours, int numMinutes) throws DaoException
+	{
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime end = now.plusHours(numHours).plusMinutes(numMinutes);
+		return getEventsOfUserInRange(userId, now, end);
+	}
 }

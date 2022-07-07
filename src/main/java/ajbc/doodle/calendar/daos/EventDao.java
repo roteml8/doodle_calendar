@@ -19,6 +19,11 @@ public interface EventDao {
 		throw new DaoException("Method not implemented");
 	}
 	
+	@Transactional(readOnly = false)
+	public default void updateEvent(Event event) throws DaoException {
+		throw new DaoException("Method not implemented");
+	}
+	
 	public default List<Event> getAllEvents() throws DaoException {
 		throw new DaoException("Method not implemented");
 	}

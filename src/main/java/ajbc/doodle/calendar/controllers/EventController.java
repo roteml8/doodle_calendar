@@ -62,21 +62,25 @@ public class EventController {
 		if (list == null)
 			return ResponseEntity.notFound().build();
 		JsonUtils.nullifyFieldsInEventList(list);
-		//list.forEach(t->t.getNotifications().forEach(u->u.setUser(null)));
-		
-//		SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept(
-//				new HashSet<String>(Arrays
-//                .asList(new String[] { "name", "firstName" }))) );
-//
-//	    FilterProvider filters = new SimpleFilterProvider().addFilter("inEventUsers", filter);
-//
-//	    MappingJacksonValue mapping = new MappingJacksonValue(list);
-
-	   // mapping.setFilters(filters);
-
-	   // return mapping;
 
 		return ResponseEntity.ok(list);
+	}
+	
+	@RequestMapping(method = RequestMethod.PUT, path="/{id}")
+	public ResponseEntity<?> updateEvent(@RequestBody Event event, @PathVariable Integer id) {
+		
+		try {
+			event.setId(event.getId());
+			service.updateEvent(event);
+			event = service.getEventById(event.getId());
+			JsonUtils.nullifyFieldsInEvent(event);
+			return ResponseEntity.status(HttpStatus.OK).body(event);
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to update event in db");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, path="/{eventId}")
