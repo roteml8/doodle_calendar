@@ -40,6 +40,7 @@ public class JsonUtils {
 	public static void nullifyFieldsInNotification(Notification notification)
 	{
 		notification.getEvent().setUsers(null);
+		notification.getEvent().setOwner(null);
 		notification.getEvent().setNotifications(null);
 		notification.getUser().setEvents(null);
 	}

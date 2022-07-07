@@ -1,5 +1,6 @@
 package ajbc.doodle.calendar.controllers;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,9 +55,24 @@ public class EventController {
 	public ResponseEntity<List<Event>> getEvents(@RequestParam Map<String, String> map) throws DaoException {
 		List<Event> list;
 		Set<String> keys = map.keySet();
-		if (keys.contains("userId"))
-			list = service.getEventsOfUser(Integer.parseInt(map.get("userId"))).stream()
-			.collect(Collectors.toList());
+		if(keys.contains("startTime") && keys.contains("endTime"))
+		{
+			LocalDateTime start = LocalDateTime.parse(map.get("startTime"));
+			LocalDateTime end = LocalDateTime.parse(map.get("endTime"));
+			if (keys.contains("userId"))
+				list = service.getEventsOfUserInRange(Integer.parseInt(map.get("userId")), start, end);
+			else
+				list = service.getAllEventsInRange(start, end);
+		}
+		else if (keys.contains("userId"))
+		{
+			if (keys.contains("numMinutes") && keys.contains("numHours"))
+				list = service.getUserEventsInNextHoursMinutes(Integer.parseInt(map.get("userId")),
+						Integer.parseInt(map.get("numHours")), Integer.parseInt(map.get("numMinutes")));
+			else
+				list = service.getEventsOfUser(Integer.parseInt(map.get("userId"))).stream()
+				.collect(Collectors.toList());
+		}	
 		else
 			list = service.getAllEvents();
 		if (list == null)
@@ -97,6 +113,26 @@ public class EventController {
 			errorMessage.setMessage("failed to get event with id "+eventId);
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 		}
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, path="/upcoming/{userId}")
+	public ResponseEntity<?> getUpcomingUserEvents(@PathVariable Integer userId) {
+		
+		List<Event> list;
+		try {
+			list = service.getUpcomingEventsOfUser(userId);
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to get upcoming events of user with id "+userId);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+		}
+		if (list == null)
+			return ResponseEntity.notFound().build();
+		JsonUtils.nullifyFieldsInEventList(list);
+
+		return ResponseEntity.ok(list);
+
 	}
 
 }

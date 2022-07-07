@@ -66,8 +66,7 @@ public class EventService {
 	public List<Event> getAllEventsInRange(LocalDateTime start, LocalDateTime end) throws DaoException
 	{
 		List<Event> events = eventDao.getAllEvents();
-		events.stream().filter(t->t.getStartTime().isAfter(start) && t.getEndTime().isBefore(end));
-		return events;
+		return events.stream().filter(t->t.getStartTime().isAfter(start) && t.getEndTime().isBefore(end)).toList();
 	}
 	
 	public Event getEventById(Integer eventId) throws DaoException
@@ -94,23 +93,21 @@ public class EventService {
 	}
 
 	@Transactional
-	public Set<Event> getUpcomingEventsOfUser(Integer userId) throws DaoException
+	public List<Event> getUpcomingEventsOfUser(Integer userId) throws DaoException
 	{
 		Set<Event> events = getEventsOfUser(userId);
-		events.stream().filter(t->t.getStartTime().isAfter(LocalDateTime.now()));
-		return events;
+		return events.stream().filter(t->t.getStartTime().isAfter(LocalDateTime.now())).toList();
 	}
 	
 	@Transactional
-	public Set<Event> getEventsOfUserInRange(Integer userId, LocalDateTime start, LocalDateTime end) throws DaoException
+	public List<Event> getEventsOfUserInRange(Integer userId, LocalDateTime start, LocalDateTime end) throws DaoException
 	{
 		Set<Event> events = getEventsOfUser(userId);
-		events.stream().filter(t->t.getStartTime().isAfter(start) && t.getEndTime().isBefore(end));
-		return events;
+		return events.stream().filter(t->t.getStartTime().isAfter(start) && t.getEndTime().isBefore(end)).toList();
 	}
 	
 	@Transactional
-	public Set<Event> getUserEventsInNextHoursMinutes(Integer userId, int numHours, int numMinutes) throws DaoException
+	public List<Event> getUserEventsInNextHoursMinutes(Integer userId, int numHours, int numMinutes) throws DaoException
 	{
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime end = now.plusHours(numHours).plusMinutes(numMinutes);
