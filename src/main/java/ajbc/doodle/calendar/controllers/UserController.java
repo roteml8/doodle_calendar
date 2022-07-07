@@ -19,6 +19,7 @@ import ajbc.doodle.calendar.daos.UserDao;
 import ajbc.doodle.calendar.entities.ErrorMessage;
 import ajbc.doodle.calendar.entities.User;
 import ajbc.doodle.calendar.services.UserService;
+import ajbc.doodle.calendar.utils.JsonUtils;
 
 @RequestMapping("/users")
 @RestController
@@ -29,11 +30,12 @@ public class UserController {
 	UserService service;
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<?> addProduct(@RequestBody User user) {
+	public ResponseEntity<?> addUser(@RequestBody User user) {
 		
 		try {
 			service.addUser(user);
 			user = service.getUser(user.getId());
+			JsonUtils.nullifyFieldsInUser(user);
 			return ResponseEntity.status(HttpStatus.CREATED).body(user);
 		} catch (DaoException e) {
 			ErrorMessage errorMessage = new ErrorMessage();
@@ -44,11 +46,12 @@ public class UserController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, path="/{id}")
-	public ResponseEntity<?> getProductsById(@PathVariable Integer id) {
+	public ResponseEntity<?> getUserById(@PathVariable Integer id) {
 		
 		User user;
 		try {
 			user = service.getUser(id);
+			JsonUtils.nullifyFieldsInUser(user);
 			return ResponseEntity.ok(user);
 		} catch (DaoException e) {
 			ErrorMessage errorMessage = new ErrorMessage();
@@ -62,12 +65,14 @@ public class UserController {
 	public ResponseEntity<List<User>> getUsers(@RequestParam Map<String, String> map) throws DaoException {
 		List<User> list;
 		Set<String> keys = map.keySet();
-		if (keys.contains("eventId"))
+		if (keys.contains("eventId"))	
 			list = service.getUsersByEvent(Integer.parseInt(map.get("eventId")));
 		else
 			list = service.getAllUsers();
 		if (list == null)
 			return ResponseEntity.notFound().build();
+		JsonUtils.nullifyFieldsInUserList(list);
+		
 
 		return ResponseEntity.ok(list);
 	}

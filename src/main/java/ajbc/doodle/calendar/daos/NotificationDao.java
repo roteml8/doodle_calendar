@@ -1,5 +1,7 @@
 package ajbc.doodle.calendar.daos;
 
+import java.util.List;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import ajbc.doodle.calendar.entities.Notification;
@@ -12,4 +14,13 @@ public interface NotificationDao {
 		throw new DaoException("Method not implemented");
 	}
 
+	public default List<Notification> getNotificationsByEvent(Integer eventId) throws DaoException {
+		throw new DaoException("Method not implemented");
+	}
+	
+
+	public default List<Notification> getNotificationsByEventAndUser(Integer eventId, Integer userId) throws DaoException {
+		throw new DaoException("Method not implemented");
+	}
+	
 }

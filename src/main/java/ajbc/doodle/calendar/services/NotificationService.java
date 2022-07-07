@@ -1,5 +1,7 @@
 package ajbc.doodle.calendar.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,9 +15,15 @@ public class NotificationService {
 	@Autowired
 	NotificationDao notificationDao;
 	
+	
 	public void addNotification(Notification notification) throws DaoException
 	{
 		notification.setIsActive(1);
 		notificationDao.addNotification(notification);
+	}
+	
+	public List<Notification> getNotificationsByEvent(Integer eventId) throws DaoException
+	{
+		return notificationDao.getNotificationsByEvent(eventId);
 	}
 }

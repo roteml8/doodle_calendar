@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,18 +13,24 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @Setter
-@AllArgsConstructor
+@NoArgsConstructor
 @ToString
 
 @Entity
 @Table(name = "notifications")
+@JsonInclude(Include.NON_NULL)
+
 public class Notification {
   
 	@Id
@@ -32,11 +39,11 @@ public class Notification {
 	private Integer id;
 	private LocalDateTime timing;
 	
-	@ManyToOne(cascade = {CascadeType.MERGE})
+	@ManyToOne()
 	@JoinColumn(name="userId")
 	private User user;
 	
-	@ManyToOne(cascade = {CascadeType.MERGE})
+	@ManyToOne()
 	@JoinColumn(name="eventId")
 	private Event event;
  

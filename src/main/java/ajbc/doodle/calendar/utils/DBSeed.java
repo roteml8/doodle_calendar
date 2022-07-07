@@ -13,8 +13,10 @@ import org.springframework.stereotype.Component;
 
 import ajbc.doodle.calendar.daos.DaoException;
 import ajbc.doodle.calendar.entities.Event;
+import ajbc.doodle.calendar.entities.Notification;
 import ajbc.doodle.calendar.entities.User;
 import ajbc.doodle.calendar.services.EventService;
+import ajbc.doodle.calendar.services.NotificationService;
 import ajbc.doodle.calendar.services.UserService;
 
 @Component
@@ -24,6 +26,8 @@ public class DBSeed {
 	UserService userService;
 	@Autowired
 	EventService eventService;
+	@Autowired
+	NotificationService notificationService;
 	
 	
 	@EventListener
@@ -31,7 +35,7 @@ public class DBSeed {
 	{
 		//seedUsers();
 //		seedEvents();
-		seedNotifications();
+//		seedNotifications();
 	}
 	
 	private void seedUsers() throws DaoException
@@ -78,9 +82,15 @@ public class DBSeed {
 		
 	}
 	
-	private void seedNotifications()
+	private void seedNotifications() throws DaoException
 	{
-		
+		User owner = userService.getUser(5);
+		Event event = eventService.getEventById(114);
+		Notification n = new Notification();
+		n.setEvent(event);
+		n.setUser(owner);
+		n.setTiming(LocalDateTime.of(2023, 1, 1, 13, 30));
+		notificationService.addNotification(n);
 	}
 
 }

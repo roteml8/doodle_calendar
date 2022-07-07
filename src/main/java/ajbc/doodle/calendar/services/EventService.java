@@ -33,7 +33,8 @@ public class EventService {
 		List<User> users = event.getUsers();
 		users.forEach(t-> {
 			try {
-				notificationDao.addNotification(new Notification(event.getStartTime(), t, event));
+				Notification notification = new Notification(event.getStartTime(), t, event);
+				notificationDao.addNotification(notification);
 			} catch (DaoException e) {
 				e.printStackTrace();
 			}
@@ -41,16 +42,41 @@ public class EventService {
 
 	}
 	
+	@Transactional
+	public List<Event> getAllEvents() throws DaoException
+	{
+		List<Event> events = eventDao.getAllEvents();
+//		events.forEach(t->{
+//			try {
+//				t.setNotifications(notificationDao.getNotificationsByEvent(t.getId()));
+//			} catch (DaoException e) {
+//				e.printStackTrace();
+//			}
+//		});
+		return events;
+	}
+	
 	public Event getEventById(Integer eventId) throws DaoException
 	{
-		return eventDao.getEvent(eventId);
+		Event event = eventDao.getEvent(eventId);
+//		List<Notification> eventNotifications = notificationDao.getNotificationsByEvent(eventId);
+//		event.setNotifications(eventNotifications);
+		return event;
 	}
 	
 	@Transactional
-	public List<Event> getEventsOfUser(Integer userId) throws DaoException
+	public Set<Event> getEventsOfUser(Integer userId) throws DaoException
 	{
 		User user = userDao.getUser(userId);
-		return user.getEvents();
+		Set<Event> userEvents = user.getEvents();
+//		userEvents.forEach(t->{
+//			try {
+//				t.setNotifications(notificationDao.getNotificationsByEventAndUser(t.getId(), userId));
+//			} catch (DaoException e) {
+//				e.printStackTrace();
+//			}
+//		});
+		return userEvents;
 	}
 
 }

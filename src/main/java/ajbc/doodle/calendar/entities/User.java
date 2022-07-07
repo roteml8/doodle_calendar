@@ -17,7 +17,12 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +36,9 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "users")
+//@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="email")
+@JsonInclude(Include.NON_NULL)
+
 public class User {
 	
 	@Id
@@ -46,8 +54,8 @@ public class User {
 	private int isActive; // default=1
 	
 	@ManyToMany(mappedBy="users", cascade = {CascadeType.MERGE},fetch = FetchType.EAGER)
-	@JsonIgnore
-	private List<Event> events = new ArrayList<>();
+//	@JsonIgnore
+	private Set<Event> events = new HashSet<>();
 	
 	public User(String firstName, String lastName, String email, LocalDate birthDate, LocalDate joinDate) {
 		this.firstName = firstName;
