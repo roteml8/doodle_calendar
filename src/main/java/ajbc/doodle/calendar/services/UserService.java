@@ -46,4 +46,24 @@ public class UserService {
 		return event.getUsers();
 		
 	}
+	
+	public User getUserByEmail(String email) throws DaoException
+	{
+		return userDao.getUserByEmail(email);
+	}
+
+	public void login(String email) throws DaoException {
+		User user = userDao.getUserByEmail(email);
+		user.setIsLogged(1);
+		userDao.updateUser(user);
+		
+	}
+	
+	public void logout(String email) throws DaoException {
+		User user = userDao.getUserByEmail(email);
+		user.setIsLogged(0);
+		userDao.updateUser(user);
+		
+	}
 }
+

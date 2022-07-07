@@ -52,6 +52,7 @@ public class User {
 	private LocalDate birthDate;
 	private LocalDate joinDate;
 	private int isActive; // default=1
+	private int isLogged; 
 	
 	@ManyToMany(mappedBy="users", cascade = {CascadeType.MERGE},fetch = FetchType.EAGER)
 	private Set<Event> events = new HashSet<>();

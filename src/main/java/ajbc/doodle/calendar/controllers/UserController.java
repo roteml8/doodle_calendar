@@ -1,8 +1,12 @@
 package ajbc.doodle.calendar.controllers;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -62,18 +66,67 @@ public class UserController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<List<User>> getUsers(@RequestParam Map<String, String> map) throws DaoException {
-		List<User> list;
+	public ResponseEntity<?> getUsers(@RequestParam Map<String, String> map) throws DaoException {
+		List<User> list = new ArrayList<>();
 		Set<String> keys = map.keySet();
 		if (keys.contains("eventId"))	
 			list = service.getUsersByEvent(Integer.parseInt(map.get("eventId")));
+		else if (keys.contains("email"))
+			list.add(service.getUserByEmail(map.get("email")));
 		else
 			list = service.getAllUsers();
 		if (list == null)
 			return ResponseEntity.notFound().build();
 		JsonUtils.nullifyFieldsInUserList(list);
-		
-
 		return ResponseEntity.ok(list);
 	}
+	
+	@RequestMapping(method = RequestMethod.PUT, path="/{id}")
+	public ResponseEntity<?> updateUser(@RequestBody User user, @PathVariable Integer id) {
+		
+		try {
+			user.setId(id);
+			service.updateUser(user);
+			user = service.getUser(user.getId());
+			JsonUtils.nullifyFieldsInUser(user);
+			return ResponseEntity.status(HttpStatus.OK).body(user);
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to update user in db");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.PUT, path="/login/{email}")
+	public ResponseEntity<?> login(@PathVariable String email) throws DaoException {
+		try {
+			service.login(email);
+			return ResponseEntity.ok(email);
+		}
+		catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to login user with email "+email);
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+		
+	}
+	
+	@RequestMapping(method = RequestMethod.PUT, path="/logout/{email}")
+	public ResponseEntity<?> logout(@PathVariable String email) throws DaoException {
+		try {
+			service.logout(email);
+			return ResponseEntity.ok(email);
+		}
+		catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to logout user with email "+email);
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+		
+	}
+	
+	
 }
