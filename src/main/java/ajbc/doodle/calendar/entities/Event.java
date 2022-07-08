@@ -28,6 +28,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Getter;
@@ -58,6 +59,7 @@ public class Event {
 	private String location;
 	
 	@OneToMany(mappedBy = "event", cascade = { CascadeType.MERGE } , fetch = FetchType.EAGER)
+	@JsonProperty(access = Access.READ_ONLY)
 	Set<Notification> notifications = new HashSet<>();;
 	
 	@ManyToOne(cascade = {CascadeType.MERGE})

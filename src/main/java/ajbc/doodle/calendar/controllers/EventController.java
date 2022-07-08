@@ -126,7 +126,6 @@ public class EventController {
 		List<Event> list;
 		try {
 			list = service.getUpcomingEventsOfUser(userId);
-			list.forEach(t->filterNotificationsByUser(t, userId));
 		} catch (DaoException e) {
 			ErrorMessage errorMessage = new ErrorMessage();
 			errorMessage.setData(e.getMessage());
@@ -135,6 +134,7 @@ public class EventController {
 		}
 		if (list == null)
 			return ResponseEntity.notFound().build();
+		list.forEach(t->filterNotificationsByUser(t, userId));
 		JsonUtils.nullifyFieldsInEventList(list);
 
 		return ResponseEntity.ok(list);
