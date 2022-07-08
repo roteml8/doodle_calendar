@@ -27,8 +27,9 @@ public class EventService {
 	@Autowired
 	NotificationDao notificationDao;
 	
-	public void addEvent(Event event) throws DaoException
+	public void addEvent(Event event, Integer userId) throws DaoException
 	{
+
 		event.setIsActive(1);
 		eventDao.addEvent(event);
 		List<User> users = event.getUsers();
@@ -43,8 +44,10 @@ public class EventService {
 
 	}
 	
-	public void updateEvent(Event event) throws DaoException
+	public void updateEvent(Event event, Integer userId) throws DaoException
 	{
+		if (!userId.equals(event.getOwner().getId()))
+			throw new DaoException("Update event can be performed by event owner only");
 		eventDao.updateEvent(event);
 	}
 	

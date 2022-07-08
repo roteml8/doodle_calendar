@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import ajbc.doodle.calendar.daos.DaoException;
 import ajbc.doodle.calendar.entities.ErrorMessage;
 import ajbc.doodle.calendar.entities.Event;
+import ajbc.doodle.calendar.entities.Notification;
 import ajbc.doodle.calendar.entities.User;
 import ajbc.doodle.calendar.services.EventService;
 import ajbc.doodle.calendar.utils.JsonUtils;
@@ -36,10 +37,10 @@ public class EventController {
 	EventService service;
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<?> addEvent(@RequestBody Event event) {
+	public ResponseEntity<?> addEvent(@RequestBody Event event, @PathVariable Integer userId) {
 		
 		try {
-			service.addEvent(event);
+			service.addEvent(event, userId);
 			event = service.getEventById(event.getId());
 			JsonUtils.nullifyFieldsInEvent(event);
 			return ResponseEntity.status(HttpStatus.CREATED).body(event);
@@ -60,7 +61,10 @@ public class EventController {
 			LocalDateTime start = LocalDateTime.parse(map.get("startTime"));
 			LocalDateTime end = LocalDateTime.parse(map.get("endTime"));
 			if (keys.contains("userId"))
+			{	
 				list = service.getEventsOfUserInRange(Integer.parseInt(map.get("userId")), start, end);
+				list.forEach(t->filterNotificationsByUser(t, Integer.parseInt(map.get("userId"))));
+			}
 			else
 				list = service.getAllEventsInRange(start, end);
 		}
@@ -72,6 +76,7 @@ public class EventController {
 			else
 				list = service.getEventsOfUser(Integer.parseInt(map.get("userId"))).stream()
 				.collect(Collectors.toList());
+			list.forEach(t->filterNotificationsByUser(t, Integer.parseInt(map.get("userId"))));
 		}	
 		else
 			list = service.getAllEvents();
@@ -82,12 +87,12 @@ public class EventController {
 		return ResponseEntity.ok(list);
 	}
 	
-	@RequestMapping(method = RequestMethod.PUT, path="/{id}")
-	public ResponseEntity<?> updateEvent(@RequestBody Event event, @PathVariable Integer id) {
+	//TODO
+	@RequestMapping(method = RequestMethod.PUT, path="/{userId}")
+	public ResponseEntity<?> updateEvent(@RequestBody Event event, @PathVariable Integer userId) {
 		
 		try {
-			event.setId(event.getId());
-			service.updateEvent(event);
+			service.updateEvent(event, userId);
 			event = service.getEventById(event.getId());
 			JsonUtils.nullifyFieldsInEvent(event);
 			return ResponseEntity.status(HttpStatus.OK).body(event);
@@ -121,6 +126,7 @@ public class EventController {
 		List<Event> list;
 		try {
 			list = service.getUpcomingEventsOfUser(userId);
+			list.forEach(t->filterNotificationsByUser(t, userId));
 		} catch (DaoException e) {
 			ErrorMessage errorMessage = new ErrorMessage();
 			errorMessage.setData(e.getMessage());
@@ -133,6 +139,13 @@ public class EventController {
 
 		return ResponseEntity.ok(list);
 
+	}
+	
+	private void filterNotificationsByUser(Event event, Integer userId)
+	{
+		Set<Notification> nots = event.getNotifications();
+		event.setNotifications(nots.stream().filter(t->t.getUser().getId().equals(userId)).collect(Collectors.toSet()));
+		
 	}
 
 }

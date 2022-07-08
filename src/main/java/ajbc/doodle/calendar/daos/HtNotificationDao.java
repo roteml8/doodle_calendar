@@ -49,6 +49,12 @@ public class HtNotificationDao implements NotificationDao {
 			throw new DaoException("No Such Notification in DB");
 		return notification;
 	}
+
+	@Override
+	public void updateNotification(Notification notification) throws DaoException {
+		
+		template.merge(notification);
+	}
 	
 	
 	

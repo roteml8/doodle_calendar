@@ -9,8 +9,10 @@ import org.springframework.stereotype.Component;
 import ajbc.doodle.calendar.daos.DaoException;
 import ajbc.doodle.calendar.daos.EventDao;
 import ajbc.doodle.calendar.daos.NotificationDao;
+import ajbc.doodle.calendar.daos.UserDao;
 import ajbc.doodle.calendar.entities.Event;
 import ajbc.doodle.calendar.entities.Notification;
+import ajbc.doodle.calendar.entities.User;
 
 @Component
 public class NotificationService {
@@ -19,6 +21,8 @@ public class NotificationService {
 	NotificationDao notificationDao;
 	@Autowired
 	EventDao eventDao;
+	@Autowired 
+	UserDao userDao;
 	
 	
 	public void addNotification(Notification notification) throws DaoException
@@ -36,6 +40,13 @@ public class NotificationService {
 	public Notification getNotificationById(Integer notifciationId) throws DaoException
 	{
 		return notificationDao.getNotificationById(notifciationId);
+	}
+
+	public void updateNotification(Notification notification, Integer userId) throws DaoException {
+		
+		if (!userId.equals(notification.getUser().getId()))
+				throw new DaoException("Update notification can be performed by owner only");
+		notificationDao.updateNotification(notification);		
 	}
 	
 }
