@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.websocket.server.PathParam;
 
@@ -13,16 +14,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ajbc.doodle.calendar.daos.DaoException;
 import ajbc.doodle.calendar.daos.UserDao;
 import ajbc.doodle.calendar.entities.ErrorMessage;
+import ajbc.doodle.calendar.entities.Event;
+import ajbc.doodle.calendar.entities.Notification;
+import ajbc.doodle.calendar.entities.SubscriptionData;
 import ajbc.doodle.calendar.entities.User;
+import ajbc.doodle.calendar.entities.webpush.Subscription;
+import ajbc.doodle.calendar.entities.webpush.SubscriptionEndpoint;
 import ajbc.doodle.calendar.services.UserService;
 import ajbc.doodle.calendar.utils.JsonUtils;
 
@@ -139,35 +147,52 @@ public class UserController {
 		}
 	}
 	
-	@RequestMapping(method = RequestMethod.PUT, path="/login/{email}")
-	public ResponseEntity<?> login(@PathVariable String email) throws DaoException {
+	
+	@PostMapping("/subscribe/{email}")
+	@ResponseStatus(HttpStatus.CREATED)
+	public ResponseEntity<?> subscribe(@RequestBody Subscription subscription, @PathVariable(required = false) String email) {
+		//if user is registered allow subscription
+		//this.subscriptions.put(subscription.getEndpoint(), subscription);
+		//for each user do 2 things
+		//1. turn logged in flag to true
+		//2 save 3 parameters in DB
 		try {
-			service.login(email);
-			return ResponseEntity.ok(email);
-		}
-		catch (DaoException e) {
+			User user = service.getUserByEmail(email);
+			String publicKey = subscription.getKeys().getP256dh();
+			String authKey = subscription.getKeys().getAuth();
+			String endPoint = subscription.getEndpoint();
+
+			SubscriptionData subData = new SubscriptionData(publicKey, authKey, endPoint);
+			user.setSubscriptionData(subData);
+			service.updateUser(user);
+			//user = userService.getUserById(user.getId());
+			service.login(user);
+
+			return ResponseEntity.ok("Logged in user with email: "+email);
+		} catch (DaoException e) {
 			ErrorMessage errorMessage = new ErrorMessage();
 			errorMessage.setData(e.getMessage());
 			errorMessage.setMessage("failed to login user with email "+email);
 			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
 		}
+//		System.out.println(subscription.getKeys().getP256dh());
+//		System.out.println(subscription.getKeys().getAuth());
+//		System.out.println(subscription.getEndpoint());
 		
 	}
 	
-	@RequestMapping(method = RequestMethod.PUT, path="/logout/{email}")
-	public ResponseEntity<?> logout(@PathVariable String email) throws DaoException {
+	@PostMapping("/unsubscribe/{email}")
+	public ResponseEntity<?> unsubscribe(@RequestBody SubscriptionEndpoint subscription, @PathVariable(required = false) String email) {
+		//this.subscriptions.remove(subscription.getEndpoint());
 		try {
-			service.logout(email);
-			return ResponseEntity.ok(email);
-		}
-		catch (DaoException e) {
+			User user = service.getUserByEmail(email);
+			service.logout(user);
+			return ResponseEntity.ok("Logged out user with email: "+email);
+		} catch (DaoException e) {
 			ErrorMessage errorMessage = new ErrorMessage();
 			errorMessage.setData(e.getMessage());
 			errorMessage.setMessage("failed to logout user with email "+email);
 			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
 		}
-		
 	}
-	
-	
 }

@@ -66,15 +66,13 @@ public class UserService {
 		return userDao.getUserByEmail(email);
 	}
 
-	public void login(String email) throws DaoException {
-		User user = userDao.getUserByEmail(email);
+	public void login(User user) throws DaoException {
 		user.setIsLogged(1);
 		userDao.updateUser(user);
 		
 	}
 	
-	public void logout(String email) throws DaoException {
-		User user = userDao.getUserByEmail(email);
+	public void logout(User user) throws DaoException {
 		user.setIsLogged(0);
 		userDao.updateUser(user);
 		

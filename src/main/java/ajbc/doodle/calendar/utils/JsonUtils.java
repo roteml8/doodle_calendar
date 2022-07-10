@@ -12,6 +12,7 @@ public class JsonUtils {
 	
 	public static void nullifyFieldsInUserList(List<User> list)
 	{
+
 		list.forEach(t->t.getEvents().forEach(u->{u.setUsers(null); u.setOwner(null);
 		u.setNotifications(null);}));
 	}

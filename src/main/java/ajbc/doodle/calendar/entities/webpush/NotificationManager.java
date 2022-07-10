@@ -32,9 +32,8 @@ public class NotificationManager {
 	@PostConstruct
 	public void initQueue() throws DaoException
 	{
-		this.queue.addAll(notificationService.getAllNotifications());
-		Runnable t1 = ()-> {System.out.println("time is up!");};
-		pool.schedule(t1, 60, TimeUnit.SECONDS);
+	//	this.queue.addAll(notificationService.getAllNotifications());
+
 	}
 	
 	public void addNotification(Notification notification)

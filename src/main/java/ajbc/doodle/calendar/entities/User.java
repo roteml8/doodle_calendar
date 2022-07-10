@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -38,7 +39,6 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "users")
-//@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="email")
 @JsonInclude(Include.NON_NULL)
 
 public class User {
@@ -59,6 +59,10 @@ public class User {
 	@ManyToMany(mappedBy="users", cascade = {CascadeType.MERGE},fetch = FetchType.EAGER)
 	@JsonProperty(access = Access.READ_ONLY)
 	private Set<Event> events = new HashSet<>();
+	
+	@OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "SubId")	
+	private SubscriptionData subscriptionData;
 	
 	public User(String firstName, String lastName, String email, LocalDate birthDate, LocalDate joinDate) {
 		this.firstName = firstName;
