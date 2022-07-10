@@ -26,7 +26,7 @@ public class HtUserDao implements UserDao {
 		template.persist(user);
 	}
 
-	
+
 
 	@Override
 	public void updateUser(User user) throws DaoException {

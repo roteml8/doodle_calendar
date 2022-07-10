@@ -38,7 +38,13 @@ public class NotificationManager {
 	
 	public void addNotification(Notification notification)
 	{
+		Notification first = queue.peek();
 		queue.add(notification);
+		if (first!= null & notification.getTiming().isBefore(first.getTiming()))
+		{
+			//TODO:
+			// schedule manager to wake up in the new notification timing
+		}
 	}
 	
 	public void run()

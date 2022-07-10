@@ -1,10 +1,13 @@
 package ajbc.doodle.calendar.services;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,6 +17,7 @@ import ajbc.doodle.calendar.daos.EventDao;
 import ajbc.doodle.calendar.daos.UserDao;
 import ajbc.doodle.calendar.entities.Event;
 import ajbc.doodle.calendar.entities.User;
+import ajbc.doodle.calendar.utils.JsonUtils;
 
 @Component
 public class UserService {
@@ -27,6 +31,19 @@ public class UserService {
 	{
 		user.setIsActive(1);
 		userDao.addUser(user);
+	}
+	
+	@Transactional
+	public List<User> addUsers(List<User> users) throws DaoException
+	{
+		List<User> addedUsers = new ArrayList<>();
+		for (User user: users)
+		{
+				addUser(user);
+				user = getUser(user.getId());
+				addedUsers.add(user);
+		}
+		return addedUsers;
 	}
 
 	public User getUser(Integer userId) throws DaoException

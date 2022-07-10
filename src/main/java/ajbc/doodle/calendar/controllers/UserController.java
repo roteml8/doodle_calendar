@@ -45,22 +45,17 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.POST, path="/addlist")
 	public ResponseEntity<?> addUsers(@RequestBody List<User> users) {
 		
-		List<User> addedUsers = new ArrayList<>();
-		for (User user: users)
-		{
-			try {
-				service.addUser(user);
-				user = service.getUser(user.getId());
-				JsonUtils.nullifyFieldsInUser(user);
-				addedUsers.add(user);
+		try {
+				users = service.addUsers(users);
+				JsonUtils.nullifyFieldsInUserList(users);
+				return ResponseEntity.status(HttpStatus.CREATED).body(users);
 			} catch (DaoException e) {
 				ErrorMessage errorMessage = new ErrorMessage();
 				errorMessage.setData(e.getMessage());
 				errorMessage.setMessage("failed to add users to db");
 				return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
 			}
-		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(addedUsers);
+		
 		} 
 	
 	@RequestMapping(method = RequestMethod.POST)

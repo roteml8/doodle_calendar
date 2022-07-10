@@ -15,6 +15,7 @@ public interface UserDao {
 		throw new DaoException("Method not implemented");
 	}
 	
+	
 	public default User getUser(Integer userId) throws DaoException {
 		throw new DaoException("Method not implemented");
 	}
