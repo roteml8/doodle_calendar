@@ -47,7 +47,7 @@ public class UserService {
 	public List<User> getUsersByEvent(Integer eventId) throws DaoException
 	{
 		Event event = eventDao.getEvent(eventId);
-		return event.getUsers();
+		return event.getUsers().stream().toList();
 		
 	}
 	
@@ -58,7 +58,7 @@ public class UserService {
 			t.getStartTime().isAfter(start) && t.getEndTime().isBefore(end));
 		Set<User> users = new HashSet<>();
 		events.forEach(t->users.addAll(t.getUsers()));
-		return users.stream().collect(Collectors.toList());
+		return users.stream().toList();
 	}
 	
 	public User getUserByEmail(String email) throws DaoException

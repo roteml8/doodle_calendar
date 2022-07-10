@@ -2,6 +2,7 @@ package ajbc.doodle.calendar.entities.webpush;
 
 import java.util.PriorityQueue;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
@@ -26,13 +27,14 @@ public class NotificationManager {
 	{
 		this.pool = new ScheduledThreadPoolExecutor(NUM_THREADS);
 		this.queue = new PriorityQueue<Notification>((n1,n2) -> n1.getTiming().compareTo(n2.getTiming()));
-		
 	}
 	
 	@PostConstruct
 	public void initQueue() throws DaoException
 	{
 		this.queue.addAll(notificationService.getAllNotifications());
+		Runnable t1 = ()-> {System.out.println("time is up!");};
+		pool.schedule(t1, 60, TimeUnit.SECONDS);
 	}
 	
 	public void addNotification(Notification notification)

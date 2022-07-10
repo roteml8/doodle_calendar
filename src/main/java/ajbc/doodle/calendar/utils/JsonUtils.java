@@ -1,6 +1,8 @@
 package ajbc.doodle.calendar.utils;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import ajbc.doodle.calendar.entities.Event;
 import ajbc.doodle.calendar.entities.Notification;
@@ -16,7 +18,11 @@ public class JsonUtils {
 	
 	public static void nullifyFieldsInUser(User user)
 	{
-		user.getEvents().forEach(u->{u.setUsers(null); u.setOwner(null); u.setNotifications(null);});
+		user.getEvents().forEach(u->{u.setUsers(null); u.setOwner(null);
+		Set<Notification> nots = u.getNotifications().stream().filter(t->t.getUser().equals(user)).collect(Collectors.toSet());
+		nots.forEach(k->{k.setEvent(null); k.setUser(null);});
+		u.setNotifications(nots);
+		});
 	}
 	
 	public static void nullifyFieldsInEventList(List<Event> list)

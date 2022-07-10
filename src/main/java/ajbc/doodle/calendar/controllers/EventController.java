@@ -36,7 +36,7 @@ public class EventController {
 	@Autowired
 	EventService service;
 	
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.POST,  path="/{userId}")
 	public ResponseEntity<?> addEvent(@RequestBody Event event, @PathVariable Integer userId) {
 		
 		try {

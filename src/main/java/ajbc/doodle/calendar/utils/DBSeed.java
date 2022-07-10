@@ -90,7 +90,7 @@ public class DBSeed {
 		User user1 = userService.getUserByEmail("danagros@gmail.com");
 		List<User> users3 = Arrays.asList(owner3, user1);
 		Event event = new Event("New Years Party", start3, end3, "Club", "new years party at the club", owner3);
-		event.setUsers(users3);
+		//event.setUsers(users3);
 		eventService.addEvent(event, owner3.getId());
 
 	}

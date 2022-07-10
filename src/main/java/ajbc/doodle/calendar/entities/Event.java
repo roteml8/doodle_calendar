@@ -66,13 +66,13 @@ public class Event {
 	@JoinColumn(name="ownerId")
 	private User owner;
 	
-	@ManyToMany(cascade = {CascadeType.MERGE},fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 		    name = "UsersEvents",
 		    joinColumns = @JoinColumn(name = "eventId", referencedColumnName = "id"),
 		    inverseJoinColumns = @JoinColumn(name = "userId", referencedColumnName = "id")
 		)
-	private List<User> users = new ArrayList<>();
+	private Set<User> users = new HashSet<>();
 	
 	private int isActive; //default=1
 

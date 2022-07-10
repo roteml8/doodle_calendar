@@ -2,6 +2,7 @@ package ajbc.doodle.calendar.services;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -33,7 +34,7 @@ public class EventService {
 			throw new DaoException("UserId does not belong to a user in the DB");
 		event.setIsActive(1);
 		eventDao.addEvent(event);
-		List<User> users = event.getUsers();
+		Set<User> users = event.getUsers();
 		users.forEach(t-> {
 			try {
 				Notification notification = new Notification(event.getStartTime(), t, event);
