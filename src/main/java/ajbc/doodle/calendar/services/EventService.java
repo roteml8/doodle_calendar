@@ -29,7 +29,8 @@ public class EventService {
 	
 	public void addEvent(Event event, Integer userId) throws DaoException
 	{
-
+		if (!doesUserExist(userId))
+			throw new DaoException("UserId does not belong to a user in the DB");
 		event.setIsActive(1);
 		eventDao.addEvent(event);
 		List<User> users = event.getUsers();
@@ -49,19 +50,15 @@ public class EventService {
 		if (!userId.equals(event.getOwner().getId()))
 			throw new DaoException("Update event can be performed by event owner only");
 		eventDao.updateEvent(event);
+		//TODO: update notifications
+		
 	}
 	
 	@Transactional
 	public List<Event> getAllEvents() throws DaoException
 	{
 		List<Event> events = eventDao.getAllEvents();
-//		events.forEach(t->{
-//			try {
-//				t.setNotifications(notificationDao.getNotificationsByEvent(t.getId()));
-//			} catch (DaoException e) {
-//				e.printStackTrace();
-//			}
-//		});
+
 		return events;
 	}
 	
@@ -75,8 +72,7 @@ public class EventService {
 	public Event getEventById(Integer eventId) throws DaoException
 	{
 		Event event = eventDao.getEvent(eventId);
-//		List<Notification> eventNotifications = notificationDao.getNotificationsByEvent(eventId);
-//		event.setNotifications(eventNotifications);
+
 		return event;
 	}
 	
@@ -85,13 +81,7 @@ public class EventService {
 	{
 		User user = userDao.getUser(userId);
 		Set<Event> userEvents = user.getEvents();
-//		userEvents.forEach(t->{
-//			try {
-//				t.setNotifications(notificationDao.getNotificationsByEventAndUser(t.getId(), userId));
-//			} catch (DaoException e) {
-//				e.printStackTrace();
-//			}
-//		});
+
 		return userEvents;
 	}
 
@@ -115,5 +105,24 @@ public class EventService {
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime end = now.plusHours(numHours).plusMinutes(numMinutes);
 		return getEventsOfUserInRange(userId, now, end);
+	}
+	
+	public void deactivate(Integer eventId) throws DaoException
+	{
+		Event event = getEventById(eventId);
+		event.setIsActive(0);
+		//TODO: deactivate event notifications
+		eventDao.updateEvent(event);
+			
+	}
+	
+	public boolean doesUserExist(Integer userId)
+	{
+		try {
+			User user = userDao.getUser(userId);
+		} catch (DaoException e) {
+			return false;
+		}
+		return true;
 	}
 }

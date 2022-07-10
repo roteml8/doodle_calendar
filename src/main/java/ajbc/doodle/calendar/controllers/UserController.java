@@ -34,6 +34,27 @@ public class UserController {
 	@Autowired
 	UserService service;
 	
+	@RequestMapping(method = RequestMethod.POST, path="/addlist")
+	public ResponseEntity<?> addUsers(@RequestBody List<User> users) {
+		
+		List<User> addedUsers = new ArrayList<>();
+		for (User user: users)
+		{
+			try {
+				service.addUser(user);
+				user = service.getUser(user.getId());
+				JsonUtils.nullifyFieldsInUser(user);
+				addedUsers.add(user);
+			} catch (DaoException e) {
+				ErrorMessage errorMessage = new ErrorMessage();
+				errorMessage.setData(e.getMessage());
+				errorMessage.setMessage("failed to add users to db");
+				return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+			}
+		}
+		return ResponseEntity.status(HttpStatus.CREATED).body(addedUsers);
+		} 
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<?> addUser(@RequestBody User user) {
 		
@@ -98,6 +119,22 @@ public class UserController {
 			ErrorMessage errorMessage = new ErrorMessage();
 			errorMessage.setData(e.getMessage());
 			errorMessage.setMessage("failed to update user in db");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.PUT, path="/{id}/deactivate")
+	public ResponseEntity<?> deactivateUser(@PathVariable Integer id) {
+		
+		try {
+			service.deactivate(id);
+			User user = service.getUser(id);
+			JsonUtils.nullifyFieldsInUser(user);
+			return ResponseEntity.status(HttpStatus.OK).body(user);
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to deactivate user in db");
 			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
 		}
 	}

@@ -79,5 +79,13 @@ public class UserService {
 		userDao.updateUser(user);
 		
 	}
+	
+	public void deactivate(Integer userId) throws DaoException
+	{
+		User user = getUser(userId);
+		user.setIsActive(0);
+		// TODO: deactivate user events and notifications
+		userDao.updateUser(user);
+	}
 }
 

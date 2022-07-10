@@ -33,4 +33,7 @@ public interface NotificationDao {
 		throw new DaoException("Method not implemented");
 	}
 	
+	public default List<Notification> getAllNotifications() throws DaoException {
+		throw new DaoException("Method not implemented");
+	}
 }

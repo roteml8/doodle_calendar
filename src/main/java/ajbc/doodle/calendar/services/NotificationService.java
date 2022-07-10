@@ -31,6 +31,10 @@ public class NotificationService {
 		notificationDao.addNotification(notification);
 	}
 	
+	public List<Notification> getAllNotifications() throws DaoException
+	{
+		return notificationDao.getAllNotifications();
+	}
 	public List<Notification> getNotificationsByEvent(Integer eventId) throws DaoException
 	{
 		Event event = eventDao.getEvent(eventId);
@@ -47,6 +51,14 @@ public class NotificationService {
 		if (!userId.equals(notification.getUser().getId()))
 				throw new DaoException("Update notification can be performed by owner only");
 		notificationDao.updateNotification(notification);		
+	}
+	
+	public void deactivate(Integer notificationId) throws DaoException
+	{
+		Notification notification = getNotificationById(notificationId);
+		notification.setIsActive(0);
+		notificationDao.updateNotification(notification);		
+		
 	}
 	
 }
