@@ -20,6 +20,7 @@ import ajbc.doodle.calendar.daos.DaoException;
 import ajbc.doodle.calendar.entities.ErrorMessage;
 import ajbc.doodle.calendar.entities.Event;
 import ajbc.doodle.calendar.entities.Notification;
+import ajbc.doodle.calendar.entities.webpush.NotificationManager;
 import ajbc.doodle.calendar.services.NotificationService;
 import ajbc.doodle.calendar.utils.JsonUtils;
 
@@ -29,6 +30,8 @@ public class NotificationController {
 	
 	@Autowired
 	NotificationService service;
+	@Autowired
+	NotificationManager notificationManager;
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<?> addNotification(@RequestBody Notification notification) {
@@ -36,6 +39,7 @@ public class NotificationController {
 		try {
 			service.addNotification(notification);
 			notification = service.getNotificationById(notification.getId());
+			//notificationManager.addNotification(notification);
 			JsonUtils.nullifyFieldsInNotification(notification);
 			return ResponseEntity.status(HttpStatus.CREATED).body(notification);
 		} catch (DaoException e) {
@@ -82,6 +86,7 @@ public class NotificationController {
 		try {
 			service.updateNotification(notification, userId);
 			notification = service.getNotificationById(notification.getId());
+			//notificationManager.addNotification(notification);
 			JsonUtils.nullifyFieldsInNotification(notification);
 			return ResponseEntity.status(HttpStatus.OK).body(notification);
 		} catch (DaoException e) {

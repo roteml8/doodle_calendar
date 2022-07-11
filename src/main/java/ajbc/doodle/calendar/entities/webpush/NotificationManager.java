@@ -1,5 +1,7 @@
 package ajbc.doodle.calendar.entities.webpush;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.PriorityQueue;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -14,7 +16,7 @@ import ajbc.doodle.calendar.entities.Notification;
 import ajbc.doodle.calendar.services.NotificationService;
 
 @Component
-public class NotificationManager {
+public class NotificationManager extends Thread {
 	
 	@Autowired
 	NotificationService notificationService;
@@ -38,18 +40,28 @@ public class NotificationManager {
 	
 	public void addNotification(Notification notification)
 	{
+		for (Notification n: (Notification[])queue.toArray())
+		{
+			if (n.getId().equals(notification.getId()))
+			{
+				queue.remove(n);
+			}
+		}
 		Notification first = queue.peek();
 		queue.add(notification);
-		if (first!= null & notification.getTiming().isBefore(first.getTiming()))
+		if (first == null || notification.getTiming().isBefore(first.getTiming()))
 		{
-			//TODO:
-			// schedule manager to wake up in the new notification timing
+			LocalDateTime now = LocalDateTime.now();
+			long seconds = ChronoUnit.SECONDS.between(now, notification.getTiming());
+			pool.schedule(this, seconds,TimeUnit.SECONDS); 
 		}
+
 	}
 	
+	@Override
 	public void run()
 	{
-		
+		//TODO: assign thread to send notification
 	}
 
 }

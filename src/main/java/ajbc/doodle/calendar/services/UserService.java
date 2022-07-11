@@ -33,7 +33,7 @@ public class UserService {
 		userDao.addUser(user);
 	}
 	
-	@Transactional
+	@Transactional //?
 	public List<User> addUsers(List<User> users) throws DaoException
 	{
 		List<User> addedUsers = new ArrayList<>();

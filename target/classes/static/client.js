@@ -141,7 +141,7 @@ async function subscribe() {
 
 	console.info(`Subscribed to Push Service: ${subscription.endpoint}`);
 
-	await fetch("users/subscribe/" + email.value, {
+	await fetch("/users/subscribe/" + email.value, {
 		method: 'POST',
 		body: JSON.stringify(subscription),
 		headers: {
