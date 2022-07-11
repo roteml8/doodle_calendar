@@ -90,6 +90,7 @@ public class UserController {
 		}
 	}
 	
+	//TODO: add try-catch
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> getUsers(@RequestParam Map<String, String> map) throws DaoException {
 		List<User> list = new ArrayList<>();

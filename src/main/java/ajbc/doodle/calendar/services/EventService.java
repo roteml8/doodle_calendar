@@ -46,6 +46,19 @@ public class EventService {
 
 	}
 	
+	public List<Event> addEvents(List<Event> events, Integer userId) throws DaoException
+	{
+		List<Event> addedEvents = new ArrayList<>();
+		for (Event e: events)
+		{
+			addEvent(e, userId);
+			e = getEventById(e.getId());
+			addedEvents.add(e);
+			
+		}
+		return addedEvents;
+	}
+	
 	public void updateEvent(Event event, Integer userId) throws DaoException
 	{
 		if (!userId.equals(event.getOwner().getId()))

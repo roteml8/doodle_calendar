@@ -52,6 +52,22 @@ public class EventController {
 		}
 	}
 	
+	@RequestMapping(method = RequestMethod.POST,  path="/addlist/{userId}")
+	public ResponseEntity<?> addEvents(@RequestBody List<Event> events, @PathVariable Integer userId) {
+		
+		try {
+			events = service.addEvents(events, userId);
+			JsonUtils.nullifyFieldsInEventList(events);
+			return ResponseEntity.status(HttpStatus.CREATED).body(events);
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to add events to db");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+	
+	//TODO: add try-catch
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<List<Event>> getEvents(@RequestParam Map<String, String> map) throws DaoException {
 		List<Event> list;
@@ -87,7 +103,6 @@ public class EventController {
 		return ResponseEntity.ok(list);
 	}
 	
-	//TODO
 	@RequestMapping(method = RequestMethod.PUT, path="/{userId}")
 	public ResponseEntity<?> updateEvent(@RequestBody Event event, @PathVariable Integer userId) {
 		

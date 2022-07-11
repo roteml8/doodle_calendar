@@ -16,7 +16,7 @@ import ajbc.doodle.calendar.entities.Notification;
 import ajbc.doodle.calendar.services.NotificationService;
 
 @Component
-public class NotificationManager extends Thread {
+public class NotificationManager implements Runnable {
 	
 	@Autowired
 	NotificationService notificationService;
@@ -61,7 +61,16 @@ public class NotificationManager extends Thread {
 	@Override
 	public void run()
 	{
-		//TODO: assign thread to send notification
+		//TODO: assign thread to send the next notification (top queue) if the user is logged in
+		// if not- mark the notification as irrelevant, move on to the next notification
+		// mark notification as sent if it was sent 
+		
+		// all notifications that need to be sent now - add to list from queue
+		// after collecting all current notifications- open thread pool
+		// each thread sends one notification to user 
+		// set manager to sleep until the next closest notification timing
+		
+		
 	}
 
 }

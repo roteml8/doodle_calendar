@@ -54,7 +54,25 @@ public class JsonUtils {
 	
 	public static void nullifyFieldsInNotificationList(List<Notification> notifications)
 	{
+		notifications.forEach(t-> {
+			t.getEvent().setUsers(null);
+			t.getEvent().setOwner(null);
+			t.getEvent().setNotifications(null);
+			t.getUser().setEvents(null);
+		});
+		
+	}
+	
+	public static void nullifyEventsInNotificationList(List<Notification> notifications)
+	{
 		notifications.forEach(t->{t.setEvent(null);t.getUser().setEvents(null);}); 
+	}
+	
+	public static void nullifyUsersInNotificationList(List<Notification> notifications)
+	{
+		notifications.forEach(t->{t.setUser(null); t.getEvent().setOwner(null);
+		t.getEvent().setUsers(null); t.getEvent().setNotifications(null);});
+		
 	}
 	
 }

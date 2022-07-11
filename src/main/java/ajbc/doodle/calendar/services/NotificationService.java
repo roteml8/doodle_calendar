@@ -27,8 +27,10 @@ public class NotificationService {
 	UserDao userDao;
 	
 	
-	public void addNotification(Notification notification) throws DaoException
+	public void addNotification(Notification notification, Integer userId, Integer eventId) throws DaoException
 	{
+		if (!doesUserExist(userId) || !doesEventExist(eventId))
+			throw new DaoException("No such user or event");
 		notification.setIsActive(1);
 		notificationDao.addNotification(notification);
 	}
@@ -75,6 +77,26 @@ public class NotificationService {
 			userNots.addAll(eventNots);
 		}
 		return userNots;
+	}
+	
+	public boolean doesUserExist(Integer userId)
+	{
+		try {
+			User user = userDao.getUser(userId);
+		} catch (DaoException e) {
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean doesEventExist(Integer eventId)
+	{
+		try {
+			Event event = eventDao.getEvent(eventId);
+		} catch (DaoException e) {
+			return false;
+		}
+		return true;
 	}
 	
 }

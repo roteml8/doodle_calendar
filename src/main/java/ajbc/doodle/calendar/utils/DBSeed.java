@@ -97,13 +97,13 @@ public class DBSeed {
 	
 	private void seedNotifications() throws DaoException
 	{
-		User owner = userService.getUser(5);
-		Event event = eventService.getEventById(114);
-		Notification n = new Notification();
-		n.setEvent(event);
-		n.setUser(owner);
-		n.setTiming(LocalDateTime.of(2023, 1, 1, 13, 30));
-		notificationService.addNotification(n);
+//		User owner = userService.getUser(5);
+//		Event event = eventService.getEventById(114);
+//		Notification n = new Notification();
+//		n.setEvent(event);
+//		n.setUser(owner);
+//		n.setTiming(LocalDateTime.of(2023, 1, 1, 13, 30));
+//		notificationService.addNotification(n);
 	}
 
 }

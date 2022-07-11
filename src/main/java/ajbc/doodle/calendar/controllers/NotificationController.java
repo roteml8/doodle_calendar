@@ -33,11 +33,11 @@ public class NotificationController {
 	@Autowired
 	NotificationManager notificationManager;
 	
-	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<?> addNotification(@RequestBody Notification notification) {
-		
+	@RequestMapping(method = RequestMethod.POST, path="/{userId}/{eventId}")
+	public ResponseEntity<?> addNotification(@RequestBody Notification notification,
+			@PathVariable Integer userId, @PathVariable Integer eventId) {
 		try {
-			service.addNotification(notification);
+			service.addNotification(notification, userId, eventId);
 			notification = service.getNotificationById(notification.getId());
 			//notificationManager.addNotification(notification);
 			JsonUtils.nullifyFieldsInNotification(notification);
@@ -68,15 +68,32 @@ public class NotificationController {
 
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<?> getNotifications(@RequestParam Map<String, String> map) throws DaoException {
+	public ResponseEntity<?> getNotifications(@RequestParam Map<String, String> map) {
 		List<Notification> list = new ArrayList<>();
 		Set<String> keys = map.keySet();
+		try {
 		if (keys.contains("eventId"))
+		{
 			list = service.getNotificationsByEvent(Integer.parseInt(map.get("eventId")));
-		if (list == null)
-			return ResponseEntity.notFound().build();
-		JsonUtils.nullifyFieldsInNotificationList(list);
-
+			JsonUtils.nullifyEventsInNotificationList(list);
+		}
+		else if (keys.contains("email"))
+		{
+			list = service.getNotificationsByUserEmail(map.get("email"));
+			JsonUtils.nullifyUsersInNotificationList(list);
+		}
+		else
+		{
+			list = service.getAllNotifications();
+			JsonUtils.nullifyFieldsInNotificationList(list);
+		}
+		}
+		catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to get notifications");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+		}
 		return ResponseEntity.ok(list);
 	}
 	
