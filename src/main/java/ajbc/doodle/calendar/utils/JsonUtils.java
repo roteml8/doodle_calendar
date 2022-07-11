@@ -31,7 +31,9 @@ public class JsonUtils {
 		list.forEach(t-> {
 			t.setUsers(null);
 			t.getOwner().setEvents(null);
-			t.getNotifications().forEach(u->{u.setEvent(null); u.getUser().setEvents(null);});
+			t.getNotifications().forEach(u->{u.setEvent(null); 
+			if (u.getUser()!=null)
+				u.getUser().setEvents(null);});
 		}
 	);
 	}

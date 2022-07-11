@@ -64,11 +64,11 @@ public class EventService {
 		if (!userId.equals(event.getOwner().getId()))
 			throw new DaoException("Update event can be performed by event owner only");
 		eventDao.updateEvent(event);
-		//TODO: update notifications
+		//TODO: update notifications?
 		
 	}
 	
-	@Transactional
+//	@Transactional
 	public List<Event> getAllEvents() throws DaoException
 	{
 		List<Event> events = eventDao.getAllEvents();
@@ -76,7 +76,7 @@ public class EventService {
 		return events;
 	}
 	
-	@Transactional
+//	@Transactional
 	public List<Event> getAllEventsInRange(LocalDateTime start, LocalDateTime end) throws DaoException
 	{
 		List<Event> events = eventDao.getAllEvents();
@@ -90,7 +90,7 @@ public class EventService {
 		return event;
 	}
 	
-	@Transactional
+//	@Transactional
 	public Set<Event> getEventsOfUser(Integer userId) throws DaoException
 	{
 		User user = userDao.getUser(userId);
@@ -99,21 +99,21 @@ public class EventService {
 		return userEvents;
 	}
 
-	@Transactional
+//	@Transactional
 	public List<Event> getUpcomingEventsOfUser(Integer userId) throws DaoException
 	{
 		Set<Event> events = getEventsOfUser(userId);
 		return events.stream().filter(t->t.getStartTime().isAfter(LocalDateTime.now())).toList();
 	}
 	
-	@Transactional
+//	@Transactional
 	public List<Event> getEventsOfUserInRange(Integer userId, LocalDateTime start, LocalDateTime end) throws DaoException
 	{
 		Set<Event> events = getEventsOfUser(userId);
 		return events.stream().filter(t->t.getStartTime().isAfter(start) && t.getEndTime().isBefore(end)).toList();
 	}
 	
-	@Transactional
+//	@Transactional
 	public List<Event> getUserEventsInNextHoursMinutes(Integer userId, int numHours, int numMinutes) throws DaoException
 	{
 		LocalDateTime now = LocalDateTime.now();

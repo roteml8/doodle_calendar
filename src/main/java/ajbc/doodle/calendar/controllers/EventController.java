@@ -67,11 +67,11 @@ public class EventController {
 		}
 	}
 	
-	//TODO: add try-catch
 	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<List<Event>> getEvents(@RequestParam Map<String, String> map) throws DaoException {
+	public ResponseEntity<?> getEvents(@RequestParam Map<String, String> map)  {
 		List<Event> list;
 		Set<String> keys = map.keySet();
+		try {
 		if(keys.contains("startTime") && keys.contains("endTime"))
 		{
 			LocalDateTime start = LocalDateTime.parse(map.get("startTime"));
@@ -96,11 +96,16 @@ public class EventController {
 		}	
 		else
 			list = service.getAllEvents();
-		if (list == null)
-			return ResponseEntity.notFound().build();
 		JsonUtils.nullifyFieldsInEventList(list);
-
 		return ResponseEntity.ok(list);
+		}
+		catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to get events");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+		}
+
 	}
 	
 	@RequestMapping(method = RequestMethod.PUT, path="/{userId}")
@@ -141,18 +146,16 @@ public class EventController {
 		List<Event> list;
 		try {
 			list = service.getUpcomingEventsOfUser(userId);
+			list.forEach(t->filterNotificationsByUser(t, userId));
+			JsonUtils.nullifyFieldsInEventList(list);
+			return ResponseEntity.ok(list);
 		} catch (DaoException e) {
 			ErrorMessage errorMessage = new ErrorMessage();
 			errorMessage.setData(e.getMessage());
 			errorMessage.setMessage("failed to get upcoming events of user with id "+userId);
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 		}
-		if (list == null)
-			return ResponseEntity.notFound().build();
-		list.forEach(t->filterNotificationsByUser(t, userId));
-		JsonUtils.nullifyFieldsInEventList(list);
 
-		return ResponseEntity.ok(list);
 
 	}
 	
@@ -160,6 +163,7 @@ public class EventController {
 	{
 		Set<Notification> nots = event.getNotifications();
 		event.setNotifications(nots.stream().filter(t->t.getUser().getId().equals(userId)).collect(Collectors.toSet()));
+		event.getNotifications().forEach(t->t.setUser(null));
 		
 	}
 
