@@ -44,7 +44,9 @@ public class NotificationManager implements Runnable {
 		List<Notification> allNots = notificationService.getAllNotifications();
 		LocalDateTime now = LocalDateTime.now();
 		queue.addAll(allNots.stream().filter(t->t.getTiming().isAfter(now) && t.getIsActive()==1).toList());
-
+		if (queue.peek()!=null)
+			pool.schedule(this, getDelay(queue.peek().getTiming()),TimeUnit.SECONDS);
+		
 	}
 	
 	public void deleteNotification(Notification notification)
