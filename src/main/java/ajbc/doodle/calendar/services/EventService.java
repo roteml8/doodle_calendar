@@ -46,6 +46,7 @@ public class EventService {
 
 	}
 	
+	@Transactional
 	public List<Event> addEvents(List<Event> events, Integer userId) throws DaoException
 	{
 		List<Event> addedEvents = new ArrayList<>();

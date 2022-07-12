@@ -21,8 +21,10 @@ import ajbc.doodle.calendar.entities.ErrorMessage;
 import ajbc.doodle.calendar.entities.Event;
 import ajbc.doodle.calendar.entities.Notification;
 import ajbc.doodle.calendar.entities.webpush.NotificationManager;
+import ajbc.doodle.calendar.services.MessagePushService;
 import ajbc.doodle.calendar.services.NotificationService;
 import ajbc.doodle.calendar.utils.JsonUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @RequestMapping("/notifications")
 @RestController
@@ -32,6 +34,8 @@ public class NotificationController {
 	NotificationService service;
 	@Autowired
 	NotificationManager notificationManager;
+	@Autowired
+	MessagePushService messagePushService;
 	
 	@RequestMapping(method = RequestMethod.POST, path="/{userId}/{eventId}")
 	public ResponseEntity<?> addNotification(@RequestBody Notification notification,
@@ -112,6 +116,16 @@ public class NotificationController {
 			errorMessage.setMessage("failed to update notification in db");
 			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
 		}
+	}
+	
+	@GetMapping(path = "/publicSigningKey", produces = "application/octet-stream")
+	public byte[] publicSigningKey() {
+		return messagePushService.getServerKeys().getPublicKeyUncompressed();
+	}
+
+	@GetMapping(path = "/publicSigningKeyBase64")
+	public String publicSigningKeyBase64() {
+		return  messagePushService.getServerKeys().getPublicKeyBase64();
 	}
 	
 

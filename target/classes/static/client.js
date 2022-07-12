@@ -35,7 +35,7 @@ async function checkSubscription() {
 	const subscription = await registration.pushManager.getSubscription();
 	if (subscription) {
 
-		const response = await fetch("/isSubscribed", {
+		const response = await fetch("/users/isSubscribed", {
 			method: 'POST',
 			body: JSON.stringify({ endpoint: subscription.endpoint }),
 			headers: {
@@ -105,7 +105,7 @@ async function unsubscribe() {
 		if (successful) {
 			console.info('Unsubscription successful');
 
-			await fetch("users/unsubscribe/" + email.value, {
+			await fetch("/users/unsubscribe/" + email.value, {
 				method: 'POST',
 				body: JSON.stringify({ endpoint: subscription.endpoint }),
 				headers: {
