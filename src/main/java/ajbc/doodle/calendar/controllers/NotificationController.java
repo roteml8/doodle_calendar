@@ -43,7 +43,7 @@ public class NotificationController {
 		try {
 			service.addNotification(notification, userId, eventId);
 			notification = service.getNotificationById(notification.getId());
-			//notificationManager.addNotification(notification);
+			notificationManager.addNotification(notification);
 			JsonUtils.nullifyFieldsInNotification(notification);
 			return ResponseEntity.status(HttpStatus.CREATED).body(notification);
 		} catch (DaoException e) {

@@ -33,8 +33,8 @@ import ajbc.doodle.calendar.ServerKeys;
 import ajbc.doodle.calendar.entities.User;
 import lombok.Getter;
 
-@Getter
 @Component
+@Getter
 public class MessagePushService {
 
 	private final CryptoService cryptoService;

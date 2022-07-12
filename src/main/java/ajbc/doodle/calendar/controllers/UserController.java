@@ -180,7 +180,7 @@ public class UserController {
 			user.setSubscriptionData(subData);
 			service.updateUser(user);
 			service.login(user);
-			messagePushService.sendPushMessage(user, messagePushService.encryptMessage(user, new PushMessage("message: ", "hello")));
+		//	messagePushService.sendPushMessage(user, messagePushService.encryptMessage(user, new PushMessage("message: ", "hello")));
 			return ResponseEntity.ok("Logged in user with email: "+email);
 		} catch (DaoException e) {
 			ErrorMessage errorMessage = new ErrorMessage();
