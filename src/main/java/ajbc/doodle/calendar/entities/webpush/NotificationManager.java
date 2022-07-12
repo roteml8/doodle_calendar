@@ -3,6 +3,7 @@ package ajbc.doodle.calendar.entities.webpush;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -40,8 +41,9 @@ public class NotificationManager implements Runnable {
 	@PostConstruct
 	public void initQueue() throws DaoException
 	{
-	//	this.queue.addAll(notificationService.getAllNotifications());
-	// add to queue only notifications with timing > now and isActive=1 
+		List<Notification> allNots = notificationService.getAllNotifications();
+		LocalDateTime now = LocalDateTime.now();
+		queue.addAll(allNots.stream().filter(t->t.getTiming().isAfter(now) && t.getIsActive()==1).toList());
 
 	}
 	
@@ -53,14 +55,8 @@ public class NotificationManager implements Runnable {
 	
 	public void addNotification(Notification notification)
 	{
+		queue.removeIf(t-> t.getId().equals(notification.getId()));
 		
-//		for (Notification n: (Notification[])queue.toArray())
-//		{
-//			if (n.getId().equals(notification.getId()))
-//			{
-//				queue.remove(n);
-//			}
-//		}
 		Notification first = queue.peek();
 		queue.add(notification);
 		if (first == null || notification.getTiming().isBefore(first.getTiming()))

@@ -54,9 +54,9 @@ public class NotificationThread implements Runnable {
 		try {
 			Event event = notification.getEvent();
 			User user = notification.getUser();
-			String info = String.format("Event %d: %s, Start: %s, End: %s, Location: %s, Description: %s, "
-					+ "isActive: %d", event.getId(), event.getTitle(), event.getStartTime().toString(), event.getEndTime().toString(),
-					event.getLocation(), event.getDescription(), event.getIsActive());
+			String info = String.format("Event ID: %d: %s, Start: %s End: %s, Location: %s, Description: %s, "
+					+ "isActive: %s", event.getId(), event.getTitle(), event.getStartTime().toString(), event.getEndTime().toString(),
+					event.getLocation(), event.getDescription(), event.getIsActive()==1?true:false);
 			boolean fail = mps.sendPushMessage(user, mps.encryptMessage(user, new PushMessage("notification", info)));
 			if (!fail)
 			{
