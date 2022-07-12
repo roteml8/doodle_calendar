@@ -108,11 +108,11 @@ public class UserController {
 		}
 	}
 	
-	//TODO: add try-catch
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> getUsers(@RequestParam Map<String, String> map) throws DaoException {
 		List<User> list = new ArrayList<>();
 		Set<String> keys = map.keySet();
+		try {
 		if (keys.contains("eventId"))	
 			list = service.getUsersByEvent(Integer.parseInt(map.get("eventId")));
 		else if (keys.contains("email"))
@@ -122,8 +122,12 @@ public class UserController {
 					LocalDateTime.parse(map.get("endTime")));
 		else
 			list = service.getAllUsers();
-		if (list == null)
-			return ResponseEntity.notFound().build();
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to get users in db");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
 		JsonUtils.nullifyFieldsInUserList(list);
 		return ResponseEntity.ok(list);
 	}

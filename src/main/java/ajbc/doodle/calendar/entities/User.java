@@ -62,6 +62,7 @@ public class User {
 	
 	@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "SubId")	
+	@JsonIgnore
 	private SubscriptionData subscriptionData;
 	
 	public User(String firstName, String lastName, String email, LocalDate birthDate, LocalDate joinDate) {

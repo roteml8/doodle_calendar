@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +36,20 @@ public class NotificationService {
 		notification.setIsActive(1);
 		notificationDao.addNotification(notification);
 	}
+	
+	@Transactional
+	public List<Notification> addNotifications(List<Notification> notifications, Integer userId, Integer eventId) throws DaoException
+	{
+		List<Notification> addedNotifications = new ArrayList<>();
+		for (Notification n: notifications)
+		{
+			addNotification(n, userId, eventId);
+			n = getNotificationById(n.getId());
+			addedNotifications.add(n);
+		}
+		return addedNotifications;
+	}
+	
 	
 	public List<Notification> getAllNotifications() throws DaoException
 	{
