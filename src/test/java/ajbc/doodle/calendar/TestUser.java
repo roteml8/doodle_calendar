@@ -3,9 +3,12 @@ package ajbc.doodle.calendar;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import ajbc.doodle.calendar.entities.Event;
 import ajbc.doodle.calendar.entities.User;
 
 class TestUser {
@@ -20,6 +23,8 @@ class TestUser {
 		assertNotNull(user);
 		assertNull(user.getId());
 		assertNull(user.getSubscriptionData());
+		assertNotNull(user.getEvents());
+		assertTrue(user.getEvents().isEmpty());
 		assertEquals(firstName, user.getFirstName());
 		assertEquals(lastName, user.getLastName());
 		assertEquals(email, user.getEmail());
@@ -99,5 +104,28 @@ class TestUser {
 		assertEquals(id, user.getId());
 	}
 	
+	@Test
+	void checkSetEvents()
+	{
+		User user = new User();
+		Event e1 = new Event();
+		e1.setId(1);
+		e1.setTitle("Party");
+		e1.setStartTime(LocalDateTime.now());
+		e1.setEndTime(LocalDateTime.now().plusHours(2));
+		e1.setDescription("my awesome party");
+		e1.setLocation("my house");
+		
+		Set<Event> events = Set.of(e1);
+		user.setEvents(events);
+		
+		Set<Event> userEvents = user.getEvents();
+
+		assertFalse(userEvents.isEmpty());
+		assertTrue(userEvents.size()==1);
+		assertTrue(userEvents.contains(e1));
+		
+		
+	}
 
 }

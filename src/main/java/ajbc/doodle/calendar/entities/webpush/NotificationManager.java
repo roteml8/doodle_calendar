@@ -19,8 +19,10 @@ import ajbc.doodle.calendar.entities.Notification;
 import ajbc.doodle.calendar.entities.User;
 import ajbc.doodle.calendar.services.MessagePushService;
 import ajbc.doodle.calendar.services.NotificationService;
+import lombok.Getter;
 
 @Component
+@Getter
 public class NotificationManager implements Runnable {
 	
 	@Autowired
@@ -42,7 +44,6 @@ public class NotificationManager implements Runnable {
 	public void initQueue() throws DaoException
 	{
 		List<Notification> allNots = notificationService.getAllNotifications();
-		LocalDateTime now = LocalDateTime.now();
 		queue.addAll(allNots.stream().filter(t->t.getWasSent()==0 && t.getIsActive()==1).toList());
 		schedule();
 		
@@ -112,7 +113,7 @@ public class NotificationManager implements Runnable {
 		
 	}
 	
-	private long getDelay(LocalDateTime time)
+	public long getDelay(LocalDateTime time)
 	{
 		LocalDateTime now = LocalDateTime.now();
 		long seconds = ChronoUnit.SECONDS.between(now, time);
