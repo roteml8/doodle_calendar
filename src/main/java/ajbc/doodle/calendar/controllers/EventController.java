@@ -29,6 +29,10 @@ import ajbc.doodle.calendar.entities.User;
 import ajbc.doodle.calendar.services.EventService;
 import ajbc.doodle.calendar.utils.JsonUtils;
 
+/*
+ * Controller that implements the API for Events
+ */
+
 @RequestMapping("/events")
 @RestController
 public class EventController {
@@ -36,6 +40,12 @@ public class EventController {
 	@Autowired
 	EventService service;
 	
+	/**
+	 * Add a new event to the DB
+	 * @param event the event object to add
+	 * @param userId the ID of the user that is adding the event
+	 * @return the new event object with ID, error if the adding process failed
+	 */
 	@RequestMapping(method = RequestMethod.POST,  path="/{userId}")
 	public ResponseEntity<?> addEvent(@RequestBody Event event, @PathVariable Integer userId) {
 		
@@ -52,6 +62,12 @@ public class EventController {
 		}
 	}
 	
+	/**
+	 * Add a list of new events to the DB
+	 * @param events list of events to add
+	 * @param userId the userId of the user that adds the events
+	 * @return the list of the events with ID, error if the adding process failed
+	 */
 	@RequestMapping(method = RequestMethod.POST,  path="/addlist/{userId}")
 	public ResponseEntity<?> addEvents(@RequestBody List<Event> events, @PathVariable Integer userId) {
 		
@@ -67,6 +83,16 @@ public class EventController {
 		}
 	}
 	
+	/**
+	 * get events according to the request parameters:
+	 * startTime, endTime: all events in the range between startTime and endTime
+	 * startTime, endTime, userId: all events in the range between startTime and endTime of user with id userId
+	 * userId, numHours, numMinutes: all events in the upcoming numHours hours and numMinutes minutes of user with id userId
+	 * userId: all events of user with id userId
+	 * no param: all events in the DB
+	 * @param map map of the request params
+	 * @return the list of the required events, error if the get process failed
+	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> getEvents(@RequestParam Map<String, String> map)  {
 		List<Event> list;
@@ -108,6 +134,12 @@ public class EventController {
 
 	}
 	
+	/**
+	 * update event in DB
+	 * @param event the event object to update
+	 * @param userId the id of the user (only the owner of an event can update it) 
+	 * @return the updated event object, error if update failed
+	 */
 	@RequestMapping(method = RequestMethod.PUT, path="/{userId}")
 	public ResponseEntity<?> updateEvent(@RequestBody Event event, @PathVariable Integer userId) {
 		
@@ -124,6 +156,11 @@ public class EventController {
 		}
 	}
 	
+	/**
+	 * update list of events in DB 
+	 * @param events the events to update
+	 * @return the updated list of events, error if the update failed
+	 */
 	@RequestMapping(method = RequestMethod.PUT)
 	public ResponseEntity<?> updateEvents(@RequestBody List<Event> events) {
 		
@@ -139,6 +176,12 @@ public class EventController {
 		}
 	}
 	
+	/**
+	 * deactivate an event in DB
+	 * deactivates all of the event notifications as well
+	 * @param eventId the id of the event to deactivate
+	 * @return the event object, error if the process failed
+	 */
 	@RequestMapping(method = RequestMethod.PUT, path="/{eventId}/deactivate")
 	public ResponseEntity<?> deactivateEvent(@PathVariable Integer eventId) {
 		
@@ -155,6 +198,12 @@ public class EventController {
 		}
 	}
 	
+	/**
+	 * deactivate events in DB
+	 * deactivates all of the events notifications as well
+	 * @param eventIds the ids of the events to deactivate
+	 * @return a success message, error if the process failed
+	 */
 	@RequestMapping(method = RequestMethod.PUT, path="/deactivate")
 	public ResponseEntity<?> deactivateEvents(@RequestBody List<Integer> eventIds) {
 		
@@ -169,6 +218,12 @@ public class EventController {
 		}
 	}
 	
+	/**
+	 * deletes event from db
+	 * deletes all the event notifications as well
+	 * @param eventId the id of the event to delete
+	 * @return success message, error if the delete failed
+	 */
 	@RequestMapping(method = RequestMethod.DELETE, path="/{eventId}")
 	public ResponseEntity<?> deleteEvent(@PathVariable Integer eventId) {
 		
@@ -183,6 +238,12 @@ public class EventController {
 		}
 	}
 	
+	/**
+	 * delete events from db
+	 * deletes all the events notifications as well
+	 * @param eventIds the ids of the events to delete
+	 * @return success message, error if the delete failed
+	 */
 	@RequestMapping(method = RequestMethod.DELETE)
 	public ResponseEntity<?> deleteEvents(@RequestBody List<Integer> eventIds) {
 		
@@ -197,6 +258,11 @@ public class EventController {
 		}
 	}
 	
+	/**
+	 * get an event by its id
+	 * @param eventId the id of the event to retrieve
+	 * @return the event object, error if the process failed
+	 */
 	@RequestMapping(method = RequestMethod.GET, path="/{eventId}")
 	public ResponseEntity<?> getEventsById(@PathVariable Integer eventId) {
 		
@@ -213,6 +279,11 @@ public class EventController {
 		}
 	}
 	
+	/**
+	 * get upcoming events of user (future events)
+	 * @param userId the id of the user 
+	 * @return the list of the events, error if the process failed
+	 */
 	@RequestMapping(method = RequestMethod.GET, path="/upcoming/{userId}")
 	public ResponseEntity<?> getUpcomingUserEvents(@PathVariable Integer userId) {
 		
@@ -232,6 +303,11 @@ public class EventController {
 
 	}
 	
+	/**
+	 * filters event notifications by user (drops notification of other users)
+	 * @param event the event
+	 * @param userId the id of the user
+	 */
 	private void filterNotificationsByUser(Event event, Integer userId)
 	{
 		Set<Notification> nots = event.getNotifications();

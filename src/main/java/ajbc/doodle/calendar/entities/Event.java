@@ -58,6 +58,9 @@ public class Event {
 	private String description;
 	private String location;
 	
+	// EAGER loading of collections means that they are fetched fully at the time their parent is fetched
+	// LAZY = fetch when needed
+	// EAGER = fetch immediately
 	@OneToMany(mappedBy = "event", cascade = { CascadeType.MERGE } , fetch = FetchType.EAGER)
 	@JsonProperty(access = Access.READ_ONLY)
 	Set<Notification> notifications = new HashSet<>();;

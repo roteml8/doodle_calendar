@@ -40,5 +40,29 @@ class TestNotificationManager {
 		assertEquals(seconds, manager.getDelay(time));
 	}
 	
+	@Test
+	public void testPriorityQueue()
+	{
+		User user = new User();
+		Event event = new Event();
+		LocalDateTime timing = LocalDateTime.of(2023, 2, 2, 15, 30);
+		Notification n = new Notification(timing, user, event);
+		manager.getQueue().add(n);
+		
+		assertTrue(manager.getQueue().size()==1);
+				
+		Notification n2 = new Notification(timing.minusDays(5), user, event);
+		manager.getQueue().add(n2);
+		
+		assertTrue(manager.getQueue().size()==2);	
+		assertEquals(n2, manager.getQueue().peek());
+		
+		manager.getQueue().remove(n2);
+		
+		assertTrue(manager.getQueue().size()==1);
+		assertEquals(n, manager.getQueue().peek());
+
+	}
+	
 
 }
