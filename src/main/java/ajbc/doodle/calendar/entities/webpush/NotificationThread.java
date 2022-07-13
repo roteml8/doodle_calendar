@@ -61,6 +61,7 @@ public class NotificationThread implements Runnable {
 			boolean fail = mps.sendPushMessage(user, mps.encryptMessage(user, new PushMessage("notification", info)));
 			if (!fail)
 			{
+				// set notification to sent
 				notification.setWasSent(1);
 				try {
 					notificationService.updateNotification(notification, user.getId());

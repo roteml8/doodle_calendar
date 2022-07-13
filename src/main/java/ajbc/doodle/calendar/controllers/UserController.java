@@ -49,6 +49,11 @@ import ajbc.doodle.calendar.services.MessagePushService;
 import ajbc.doodle.calendar.services.UserService;
 import ajbc.doodle.calendar.utils.JsonUtils;
 
+/**
+ * controller that implements the API for Users
+ * @author Rotem
+ *
+ */
 @RequestMapping("/users")
 @RestController
 public class UserController {
@@ -60,6 +65,12 @@ public class UserController {
 	@Autowired
 	MessagePushService messagePushService;
 	
+	
+	/**
+	 * add a list of users to db
+	 * @param users the list of users
+	 * @return the list of users with ids, error if failed
+	 */
 	@RequestMapping(method = RequestMethod.POST, path="/addlist")
 	public ResponseEntity<?> addUsers(@RequestBody List<User> users) {
 		
@@ -76,6 +87,11 @@ public class UserController {
 		
 		} 
 	
+	/**
+	 * add a user to db
+	 * @param user the user
+	 * @return the user with id, error if failed
+	 */
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<?> addUser(@RequestBody User user) {
 		
@@ -92,6 +108,11 @@ public class UserController {
 		}
 	}
 	
+	/**
+	 * get a user by id
+	 * @param id the id
+	 * @return the user with the given id, error if failed
+	 */
 	@RequestMapping(method = RequestMethod.GET, path="/{id}")
 	public ResponseEntity<?> getUserById(@PathVariable Integer id) {
 		
@@ -108,8 +129,17 @@ public class UserController {
 		}
 	}
 	
+	/**
+	 * get users by request params
+	 * eventId: get all users that are part of the event with id eventId
+	 * email: get the user with the given email
+	 * startTime, endTime: get all users that have en event in the range of startTime to endTime
+	 * no param: get all users
+	 * @param map the map of request params
+	 * @return the list of the required users, error if failed
+	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<?> getUsers(@RequestParam Map<String, String> map) throws DaoException {
+	public ResponseEntity<?> getUsers(@RequestParam Map<String, String> map) {
 		List<User> list = new ArrayList<>();
 		Set<String> keys = map.keySet();
 		try {
@@ -132,6 +162,12 @@ public class UserController {
 		return ResponseEntity.ok(list);
 	}
 	
+	/**
+	 * update a user
+	 * @param user the updated user object
+	 * @param id the id of the user
+	 * @return the updated user, error if failed
+	 */
 	@RequestMapping(method = RequestMethod.PUT, path="/{id}")
 	public ResponseEntity<?> updateUser(@RequestBody User user, @PathVariable Integer id) {
 		
@@ -149,6 +185,11 @@ public class UserController {
 		}
 	}
 	
+	/**
+	 * update list of users
+	 * @param users list of users to update
+	 * @return the list of updated users, error if failed
+	 */
 	@RequestMapping(method = RequestMethod.PUT)
 	public ResponseEntity<?> updateUsers(@RequestBody List<User> users) {
 		
@@ -164,6 +205,13 @@ public class UserController {
 		}
 	}
 	
+	/**
+	 * deactivates a user
+	 * deactivates the user notifications
+	 * deactivates the events that the user owns
+	 * @param id the id of the user to deactivate
+	 * @return the updated user object, error if failed
+	 */
 	@RequestMapping(method = RequestMethod.PUT, path="/{id}/deactivate")
 	public ResponseEntity<?> deactivateUser(@PathVariable Integer id) {
 		
@@ -180,6 +228,13 @@ public class UserController {
 		}
 	}
 	
+	/**
+	 * deletes a user from the db
+	 * deletes the user notifications
+	 * deletes the events that the user owns
+	 * @param id the id of the user
+	 * @return success message, error if failed
+	 */
 	@RequestMapping(method = RequestMethod.DELETE, path="/{id}")
 	public ResponseEntity<?> deleteUser(@PathVariable Integer id) {
 		
@@ -194,7 +249,21 @@ public class UserController {
 		}
 	}
 	
-	
+	/**
+	 * subscribe (login) user to receive push messages
+	 * sets the user as logged in
+	 * @param subscription subscription data sent from the browser
+	 * @param email the user email
+	 * @return success message, error if failed
+	 * @throws InvalidKeyException
+	 * @throws JsonProcessingException
+	 * @throws NoSuchAlgorithmException
+	 * @throws InvalidKeySpecException
+	 * @throws InvalidAlgorithmParameterException
+	 * @throws NoSuchPaddingException
+	 * @throws IllegalBlockSizeException
+	 * @throws BadPaddingException
+	 */
 	@PostMapping("/subscribe/{email}")
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<?> subscribe(@RequestBody Subscription subscription, @PathVariable(required = false) String email) throws InvalidKeyException, JsonProcessingException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
@@ -209,7 +278,6 @@ public class UserController {
 			user.setSubscriptionData(subData);
 			service.updateUser(user);
 			service.login(user);
-		//	messagePushService.sendPushMessage(user, messagePushService.encryptMessage(user, new PushMessage("message: ", "hello")));
 			return ResponseEntity.ok("Logged in user with email: "+email);
 		} catch (DaoException e) {
 			ErrorMessage errorMessage = new ErrorMessage();
@@ -221,9 +289,15 @@ public class UserController {
 		
 	}
 	
+	/**
+	 * unsubscribe (logout) user from push messages
+	 * sets the user as logged out
+	 * @param subscription end point from browser
+	 * @param email the user email
+	 * @return success message, error if failed
+	 */
 	@PostMapping("/unsubscribe/{email}")
 	public ResponseEntity<?> unsubscribe(@RequestBody SubscriptionEndpoint subscription, @PathVariable(required = false) String email) {
-		//this.subscriptions.remove(subscription.getEndpoint());
 		try {
 			User user = service.getUserByEmail(email);
 			service.logout(user);
@@ -236,7 +310,12 @@ public class UserController {
 		}
 	}
 	
-	
+	/**
+	 * checks if a user is currently subscribed to push messages by checking endpoint
+	 * @param subscription end point from browser
+	 * @return true if a user is subscribed, false otherwise 
+	 * @throws DaoException
+	 */
 	@PostMapping("/isSubscribed")
 	public boolean isSubscribed(@RequestBody SubscriptionEndpoint subscription) throws DaoException {
 		List<User> users = service.getAllUsers();
