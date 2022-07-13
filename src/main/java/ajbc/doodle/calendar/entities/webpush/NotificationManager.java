@@ -28,7 +28,7 @@ public class NotificationManager implements Runnable {
 	@Autowired
 	MessagePushService mps;
 	
-	private final int NUM_THREADS = 3;
+	private final int NUM_THREADS = 10;
 	private PriorityQueue<Notification> queue;
 	private ScheduledThreadPoolExecutor pool;
 	
@@ -43,15 +43,20 @@ public class NotificationManager implements Runnable {
 	{
 		List<Notification> allNots = notificationService.getAllNotifications();
 		LocalDateTime now = LocalDateTime.now();
-		queue.addAll(allNots.stream().filter(t->t.getTiming().isAfter(now) && t.getIsActive()==1).toList());
-		if (queue.peek()!=null)
-			pool.schedule(this, getDelay(queue.peek().getTiming()),TimeUnit.SECONDS);
+		queue.addAll(allNots.stream().filter(t->t.getWasSent()==0 && t.getIsActive()==1).toList());
+		schedule();
 		
 	}
 	
 	public void deleteNotification(Notification notification)
 	{
+		Notification first = queue.peek();
 		queue.remove(notification);
+		if (notification.equals(first))
+		{
+			schedule();
+		}
+		
 	}
 	
 	
@@ -84,23 +89,25 @@ public class NotificationManager implements Runnable {
 		
 		Notification first = queue.peek();
 		Notification current;
-		do
+		if (first != null)
 		{
-			current = queue.poll();
-			User user = current.getUser();
-			if (user.getIsLogged()==1 && current.getWasSent() == 0)
+			do
 			{
-				toSend.add(current);
-			}
+				current = queue.poll();
+				User user = current.getUser();
+				if (user.getIsLogged()==1 && current.getIsActive()==1)
+				{
+					toSend.add(current);
+				}
 
-			current = queue.peek();
+				current = queue.peek();
 
-		} while (current!=null && current.getTiming().equals(first.getTiming()));
+			} while (current!=null && current.getTiming().equals(first.getTiming()));
+			
+			toSend.forEach(t->pool.execute(new NotificationThread(t, mps, notificationService)));
+		}
 		
-		toSend.forEach(t->pool.execute(new NotificationThread(t, mps, notificationService)));
-		
-		if (queue.peek()!=null)
-			pool.schedule(this, getDelay(queue.peek().getTiming()),TimeUnit.SECONDS);
+		schedule();
 		
 		
 	}
@@ -110,6 +117,18 @@ public class NotificationManager implements Runnable {
 		LocalDateTime now = LocalDateTime.now();
 		long seconds = ChronoUnit.SECONDS.between(now, time);
 		return seconds; 
+	}
+	
+	private void schedule()
+	{
+		if (queue.peek()!=null)
+		{
+			if (queue.peek().getTiming().isBefore(LocalDateTime.now()))
+				pool.schedule(this, 0, TimeUnit.SECONDS);
+			else
+				pool.schedule(this, getDelay(queue.peek().getTiming()),TimeUnit.SECONDS);
+		}
+			
 	}
 
 }

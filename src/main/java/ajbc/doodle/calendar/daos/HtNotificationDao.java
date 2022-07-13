@@ -63,6 +63,13 @@ public class HtNotificationDao implements NotificationDao {
 		
 		return (List<Notification>)template.findByCriteria(criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY));
 	}
+
+	@Override
+	public void deleteNotification(Integer notificationId) throws DaoException {
+		Notification notification = getNotificationById(notificationId);
+		template.delete(notification);
+	}
+	
 	
 	
 	

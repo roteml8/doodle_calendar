@@ -133,6 +133,37 @@ public class NotificationController {
 		}
 	}
 	
+	@RequestMapping(method = RequestMethod.PUT, path="/{notificationId}/deactivate")
+	public ResponseEntity<?> deactivateNotification(@PathVariable Integer notificationId) {
+		
+		try {
+			service.deactivateNotification(notificationId);
+			Notification notification = service.getNotificationById(notificationId);
+			notificationManager.addNotification(notification);
+			JsonUtils.nullifyFieldsInNotification(notification);
+			return ResponseEntity.status(HttpStatus.OK).body(notification);
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to deactivate notification in db");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.DELETE, path="/{notificationId}")
+	public ResponseEntity<?> deleteNotification(@PathVariable Integer notificationId) {
+		
+		try {
+			service.deleteNotification(notificationId);
+			return ResponseEntity.status(HttpStatus.OK).body("Notification was successfully deleted");
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to delete notification in db");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+	
 	@GetMapping(path = "/publicSigningKey", produces = "application/octet-stream")
 	public byte[] publicSigningKey() {
 		return messagePushService.getServerKeys().getPublicKeyUncompressed();

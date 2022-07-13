@@ -62,6 +62,12 @@ public class HtUserDao implements UserDao {
 		return result.get(0);
 	}
 
+	@Override
+	public void deleteUser(Integer userId) throws DaoException {
+		User user = getUser(userId);
+		template.delete(user);
+	}
+
 	
 	
 	

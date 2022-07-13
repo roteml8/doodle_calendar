@@ -33,6 +33,8 @@ public class NotificationService {
 	{
 		if (!doesUserExist(userId) || !doesEventExist(eventId))
 			throw new DaoException("No such user or event");
+		if (!isEventOfUser(userId, eventId))
+			throw new DaoException("No such event of user");
 		notification.setIsActive(1);
 		notificationDao.addNotification(notification);
 	}
@@ -73,14 +75,6 @@ public class NotificationService {
 		notificationDao.updateNotification(notification);		
 	}
 	
-	public void deactivate(Integer notificationId) throws DaoException
-	{
-		Notification notification = getNotificationById(notificationId);
-		notification.setIsActive(0);
-		notificationDao.updateNotification(notification);		
-		
-	}
-	
 	public List<Notification> getNotificationsByUserEmail(String email) throws DaoException
 	{
 		User user = userDao.getUserByEmail(email);
@@ -115,4 +109,26 @@ public class NotificationService {
 		return true;
 	}
 	
+	private boolean isEventOfUser(Integer userId, Integer eventId) throws DaoException
+	{
+		User user = userDao.getUser(userId);
+		for (Event e: user.getEvents())
+		{
+			if (e.getId().equals(eventId))
+				return true;
+		}
+		return false;
+	}
+	
+	public void deactivateNotification(Integer notificationId) throws DaoException
+	{
+		Notification notification = getNotificationById(notificationId);
+		notification.setIsActive(0);
+		notificationDao.updateNotification(notification);
+	}
+	
+	public void deleteNotification(Integer notificationId) throws DaoException
+	{
+		notificationDao.deleteNotification(notificationId);
+	}
 }
