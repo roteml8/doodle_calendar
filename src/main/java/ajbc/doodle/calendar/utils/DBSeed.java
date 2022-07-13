@@ -37,7 +37,7 @@ public class DBSeed {
 	{
 //		seedUsers();
 //		seedEvents();
-		seedNotifications();
+//		seedNotifications();
 	}
 	
 	private void seedUsers() throws DaoException

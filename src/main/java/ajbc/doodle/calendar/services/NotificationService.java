@@ -20,6 +20,8 @@ import ajbc.doodle.calendar.entities.User;
 
 @Component
 public class NotificationService {
+	
+	private final int MAX_NOTIFICATIONS_PER_EVENT = 10;
 
 	@Autowired
 	NotificationDao notificationDao;
@@ -35,6 +37,10 @@ public class NotificationService {
 			throw new DaoException("No such user or event");
 		if (!isEventOfUser(userId, eventId))
 			throw new DaoException("No such event of user");
+		Event event = eventDao.getEvent(eventId);
+		List<Notification> userEventNots = event.getNotifications().stream().filter(t->t.getUser().getId().equals(userId)).toList();
+		if (userEventNots.size()==MAX_NOTIFICATIONS_PER_EVENT)
+			throw new DaoException("User reached max notifications per event");
 		notification.setIsActive(1);
 		notificationDao.addNotification(notification);
 	}

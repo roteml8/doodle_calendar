@@ -149,6 +149,21 @@ public class UserController {
 		}
 	}
 	
+	@RequestMapping(method = RequestMethod.PUT)
+	public ResponseEntity<?> updateUsers(@RequestBody List<User> users) {
+		
+		try {
+			users = service.updateUsers(users);
+			JsonUtils.nullifyFieldsInUserList(users);
+			return ResponseEntity.status(HttpStatus.OK).body(users);
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to update users in db");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+	
 	@RequestMapping(method = RequestMethod.PUT, path="/{id}/deactivate")
 	public ResponseEntity<?> deactivateUser(@PathVariable Integer id) {
 		

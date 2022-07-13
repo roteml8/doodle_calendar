@@ -124,6 +124,21 @@ public class EventController {
 		}
 	}
 	
+	@RequestMapping(method = RequestMethod.PUT)
+	public ResponseEntity<?> updateEvents(@RequestBody List<Event> events) {
+		
+		try {
+			events = service.updatedEvents(events);
+			JsonUtils.nullifyFieldsInEventList(events);
+			return ResponseEntity.status(HttpStatus.OK).body(events);
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to update events in db");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+	
 	@RequestMapping(method = RequestMethod.PUT, path="/{eventId}/deactivate")
 	public ResponseEntity<?> deactivateEvent(@PathVariable Integer eventId) {
 		
@@ -140,6 +155,20 @@ public class EventController {
 		}
 	}
 	
+	@RequestMapping(method = RequestMethod.PUT, path="/deactivate")
+	public ResponseEntity<?> deactivateEvents(@RequestBody List<Integer> eventIds) {
+		
+		try {
+			service.deactivateEvents(eventIds);
+			return ResponseEntity.status(HttpStatus.OK).body("succrssfully deactivated events");
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to deactivate events in db");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+	
 	@RequestMapping(method = RequestMethod.DELETE, path="/{eventId}")
 	public ResponseEntity<?> deleteEvent(@PathVariable Integer eventId) {
 		
@@ -150,6 +179,20 @@ public class EventController {
 			ErrorMessage errorMessage = new ErrorMessage();
 			errorMessage.setData(e.getMessage());
 			errorMessage.setMessage("failed to delete event in db");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.DELETE)
+	public ResponseEntity<?> deleteEvents(@RequestBody List<Integer> eventIds) {
+		
+		try {
+			service.deleteEvents(eventIds);
+			return ResponseEntity.status(HttpStatus.OK).body("Events were successfully deleted from db");
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to delete events in db");
 			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
 		}
 	}

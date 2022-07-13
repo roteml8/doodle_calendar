@@ -65,8 +65,24 @@ public class EventService {
 		if (!userId.equals(event.getOwner().getId()))
 			throw new DaoException("Update event can be performed by event owner only");
 		eventDao.updateEvent(event);
-		//TODO: update notifications?
 		
+	}
+	
+	@Transactional
+	public List<Event> updatedEvents(List<Event> events) throws DaoException
+	{
+		List<Event> updatedEvents = new ArrayList<>();
+		events.forEach(t->{
+			try {
+				updateEvent(t,t.getOwner().getId());
+				t = getEventById(t.getId());
+				updatedEvents.add(t);
+			} catch (DaoException e) {
+				e.printStackTrace();
+			}
+			
+		});
+		return updatedEvents;
 	}
 	
 //	@Transactional
@@ -129,12 +145,23 @@ public class EventService {
 		
 		eventDao.updateEvent(event);
 		
-		//TODO: deactivate event notifications
 		event.getNotifications().forEach(t->{t.setIsActive(0); try {
 			notificationDao.updateNotification(t);
 		} catch (DaoException e) {
 			e.printStackTrace();
 		}});		
+	}
+	
+	@Transactional
+	public void deactivateEvents(List<Integer> eventIds) throws DaoException
+	{
+		eventIds.forEach(t->{
+			try {
+				deactivateEvent(t);
+			} catch (DaoException e) {
+				e.printStackTrace();
+			}
+		});
 	}
 	
 	public void deleteEvent(Integer eventId) throws DaoException
@@ -149,6 +176,18 @@ public class EventService {
 			}
 		});
 		eventDao.deleteEvent(eventId);
+	}
+	
+	@Transactional
+	public void deleteEvents(List<Integer> eventIds) throws DaoException
+	{
+		eventIds.forEach(t->{
+			try {
+				deleteEvent(t);
+			} catch (DaoException e) {
+				e.printStackTrace();
+			}
+		});
 	}
 	
 	public boolean doesUserExist(Integer userId)

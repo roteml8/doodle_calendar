@@ -65,6 +65,22 @@ public class UserService {
 		userDao.updateUser(user);
 	}
 	
+	@Transactional
+	public List<User> updateUsers(List<User> users) throws DaoException
+	{
+		List<User> updatedUsers = new ArrayList<>();
+		users.forEach(t->{
+			try {
+				updateUser(t);
+				t = getUser(t.getId());
+				updatedUsers.add(t);
+			} catch (DaoException e) {
+				e.printStackTrace();
+			}
+		});
+		return updatedUsers;
+	}
+	
 	public List<User> getUsersByEvent(Integer eventId) throws DaoException
 	{
 		Event event = eventDao.getEvent(eventId);
