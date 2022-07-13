@@ -26,6 +26,11 @@ import ajbc.doodle.calendar.services.NotificationService;
 import ajbc.doodle.calendar.utils.JsonUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 
+/**
+ * controller that implements the API for Notifications
+ * @author Rotem
+ *
+ */
 @RequestMapping("/notifications")
 @RestController
 public class NotificationController {
@@ -37,6 +42,15 @@ public class NotificationController {
 	@Autowired
 	MessagePushService messagePushService;
 	
+	
+	/**
+	 * add a new notification to the DB
+	 * adds the notification to the notification manager
+	 * @param notification the notification 
+	 * @param userId the id of the notification's user
+	 * @param eventId the id of the notification's event (event of the user)
+	 * @return the notification object with id, error if the process failed
+	 */
 	@RequestMapping(method = RequestMethod.POST, path="/{userId}/{eventId}")
 	public ResponseEntity<?> addNotification(@RequestBody Notification notification,
 			@PathVariable Integer userId, @PathVariable Integer eventId) {
@@ -54,6 +68,14 @@ public class NotificationController {
 		}
 	}
 	
+	/**
+	 * adds a list of notifications to the db
+	 * adds the list of the notifications to the notification manager
+	 * @param notifications the notifications
+	 * @param userId the notifications user id
+	 * @param eventId the notifications event id (event of the user)
+	 * @return the list of the notifications with id, error if the process failed
+	 */
 	@RequestMapping(method = RequestMethod.POST, path="addlist/{userId}/{eventId}")
 	public ResponseEntity<?> addNotifications(@RequestBody List<Notification> notifications,
 			@PathVariable Integer userId, @PathVariable Integer eventId) {
@@ -70,6 +92,11 @@ public class NotificationController {
 		}
 	}
 	
+	/**
+	 * get notification by id
+	 * @param notificationId the id of the notification
+	 * @return the notification object, error if the process failed
+	 */
 	@RequestMapping(method = RequestMethod.GET, path="/{notificationId}")
 	public ResponseEntity<?> getNotificationById(@PathVariable Integer notificationId) {
 		
@@ -86,7 +113,14 @@ public class NotificationController {
 		}
 	}
 
-	
+	/**
+	 * get notifications by the request params
+	 * eventId: get all notifications of event with id eventId
+	 * email: get all notifications of user with email
+	 * no param: get all notifications in db
+	 * @param map the map of the requst params
+	 * @return the list of the required notifications, error if the process failed 
+	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> getNotifications(@RequestParam Map<String, String> map) {
 		List<Notification> list = new ArrayList<>();
@@ -117,6 +151,13 @@ public class NotificationController {
 		return ResponseEntity.ok(list);
 	}
 	
+	/**
+	 * update notification
+	 * adds the updated notification to the notification manager
+	 * @param notification the notification
+	 * @param userId the id of the notification's user (only the user is allowed to update their notification)
+	 * @return the updated notification, error if the update failed
+	 */
 	@RequestMapping(method = RequestMethod.PUT, path="/{userId}")
 	public ResponseEntity<?> updateNotification(@RequestBody Notification notification, @PathVariable Integer userId) {
 		
@@ -134,6 +175,12 @@ public class NotificationController {
 		}
 	}
 	
+	/**
+	 * update list of notifications
+	 * adds the updated notifications to the notification manager
+	 * @param notifications the list of notifications
+	 * @return the updated list, error if the update failed
+	 */
 	@RequestMapping(method = RequestMethod.PUT)
 	public ResponseEntity<?> updateNotifications(@RequestBody List<Notification> notifications) {
 		
@@ -150,6 +197,12 @@ public class NotificationController {
 		}
 	}
 	
+	/**
+	 * deactivates notification
+	 * deletes notification in notification manager
+	 * @param notificationId the id of the notification
+	 * @return the notification object, error if the process failed
+	 */
 	@RequestMapping(method = RequestMethod.PUT, path="/{notificationId}/deactivate")
 	public ResponseEntity<?> deactivateNotification(@PathVariable Integer notificationId) {
 		
@@ -167,6 +220,12 @@ public class NotificationController {
 		}
 	}
 	
+	/**
+	 * deactivates list of notifications
+	 * deletes the notifications from notification manager 
+	 * @param notificationIds the ids of the notifications
+	 * @return success message, error if failed
+	 */
 	@RequestMapping(method = RequestMethod.PUT, path="/deactivate")
 	public ResponseEntity<?> deactivateNotifications(@RequestBody List<Integer> notificationIds) {
 		
@@ -182,6 +241,12 @@ public class NotificationController {
 		}
 	}
 	
+	/**
+	 * deletes notification from db
+	 * deletes the notification from the notification manager 
+	 * @param notificationId the notification id
+	 * @return success message, error if failed
+	 */
 	@RequestMapping(method = RequestMethod.DELETE, path="/{notificationId}")
 	public ResponseEntity<?> deleteNotification(@PathVariable Integer notificationId) {
 		
@@ -197,6 +262,12 @@ public class NotificationController {
 		}
 	}
 	
+	/**
+	 * delete list of notification 
+	 * delete the notifications from notification manager
+	 * @param notificationIds the ids of the notifications
+	 * @return success message, error if failed
+	 */
 	@RequestMapping(method = RequestMethod.DELETE)
 	public ResponseEntity<?> deleteNotifications(@RequestBody List<Integer> notificationIds) {
 		
@@ -211,6 +282,7 @@ public class NotificationController {
 			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
 		}
 	}
+	
 	
 	@GetMapping(path = "/publicSigningKey", produces = "application/octet-stream")
 	public byte[] publicSigningKey() {
