@@ -59,6 +59,7 @@ public class NotificationController {
 			@PathVariable Integer userId, @PathVariable Integer eventId) {
 		try {
 			notifications = service.addNotifications(notifications, userId, eventId);
+			notifications.forEach(t->notificationManager.addNotification(t));
 			JsonUtils.nullifyFieldsInNotificationList(notifications);
 			return ResponseEntity.status(HttpStatus.CREATED).body(notifications);
 		} catch (DaoException e) {
@@ -122,7 +123,7 @@ public class NotificationController {
 		try {
 			service.updateNotification(notification, userId);
 			notification = service.getNotificationById(notification.getId());
-			//notificationManager.addNotification(notification);
+			notificationManager.addNotification(notification);
 			JsonUtils.nullifyFieldsInNotification(notification);
 			return ResponseEntity.status(HttpStatus.OK).body(notification);
 		} catch (DaoException e) {
@@ -139,7 +140,7 @@ public class NotificationController {
 		try {
 			service.deactivateNotification(notificationId);
 			Notification notification = service.getNotificationById(notificationId);
-			notificationManager.addNotification(notification);
+			notificationManager.deleteNotification(notificationId);
 			JsonUtils.nullifyFieldsInNotification(notification);
 			return ResponseEntity.status(HttpStatus.OK).body(notification);
 		} catch (DaoException e) {
@@ -155,6 +156,7 @@ public class NotificationController {
 		
 		try {
 			service.deleteNotification(notificationId);
+			notificationManager.deleteNotification(notificationId);
 			return ResponseEntity.status(HttpStatus.OK).body("Notification was successfully deleted");
 		} catch (DaoException e) {
 			ErrorMessage errorMessage = new ErrorMessage();

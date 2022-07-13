@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -49,15 +50,16 @@ public class NotificationManager implements Runnable {
 		
 	}
 	
-	public void deleteNotification(Notification notification)
+	public void deleteNotification(Integer notificationId)
 	{
 		Notification first = queue.peek();
-		queue.remove(notification);
-		if (notification.equals(first))
+		queue.removeIf(t->t.getId().equals(notificationId));
+		if (first.getId().equals(notificationId))
 		{
 			schedule();
 		}
 		
+
 	}
 	
 	
@@ -69,8 +71,7 @@ public class NotificationManager implements Runnable {
 		queue.add(notification);
 		if (first == null || notification.getTiming().isBefore(first.getTiming()))
 		{
-			long seconds = getDelay(notification.getTiming());
-			pool.schedule(this, seconds,TimeUnit.SECONDS); 
+			schedule();
 		}
 
 	}
@@ -122,6 +123,8 @@ public class NotificationManager implements Runnable {
 	
 	private void schedule()
 	{
+		BlockingQueue<Runnable> tasks = pool.getQueue();
+		tasks.clear();
 		if (queue.peek()!=null)
 		{
 			if (queue.peek().getTiming().isBefore(LocalDateTime.now()))

@@ -37,7 +37,7 @@ public class DBSeed {
 	{
 //		seedUsers();
 //		seedEvents();
-//		seedNotifications();
+		seedNotifications();
 	}
 	
 	private void seedUsers() throws DaoException
@@ -101,39 +101,40 @@ public class DBSeed {
 	{
 		
 		//LocalDateTime time = LocalDateTime.of(2022, 7, 12, 23, 20);
-//		User owner = userService.getUserByEmail("missroteml@gmail.com");
-//		Event event = eventService.getEventById(125);
-//		Notification n = new Notification();
-//		n.setEvent(event);
-//		n.setUser(owner);
+		User owner = userService.getUserByEmail("missroteml@gmail.com");
+		Event event = eventService.getEventById(125);
+		Notification n = new Notification();
+		n.setEvent(event);
+		n.setUser(owner);
 		LocalDateTime now = LocalDateTime.now();
-//		n.setTiming(now.plusSeconds(20));
-//		notificationService.addNotification(n, owner.getId(), event.getId());
-//		n = notificationService.getNotificationById(n.getId());
-//		
-//		notificationManager.addNotification(n);
+		n.setTiming(now.plusSeconds(20));
+		notificationService.addNotification(n, owner.getId(), event.getId());
+		n = notificationService.getNotificationById(n.getId());
 		
-//		n.setTiming(now.plusSeconds(10));
-//		notificationManager.addNotification(n);
+		notificationManager.addNotification(n);
 		
-//		Notification n2 = new Notification();
-//		Event event2 = eventService.getEventById(124);
-//		n2.setUser(owner);
-//		n2.setEvent(event2);
-//		n2.setTiming(time);;
-//		notificationService.addNotification(n2, owner.getId(), event2.getId());
-//		
-//		notificationManager.addNotification(n2);
+		n.setTiming(now.plusSeconds(15));
+		notificationManager.addNotification(n);
 		
-		User user2 = userService.getUserByEmail("yaronshender@gmail.com");
 		Notification n2 = new Notification();
-		Event event2 = eventService.getEventById(130);
-		n2.setUser(user2);
+		Event event2 = eventService.getEventById(124);
+		n2.setUser(owner);
 		n2.setEvent(event2);
-		n2.setTiming(now.plusSeconds(10));
-		notificationService.addNotification(n2, user2.getId(), event2.getId());
+		n2.setTiming(now.plusSeconds(100));;
+		notificationService.addNotification(n2, owner.getId(), event2.getId());
 		
 		notificationManager.addNotification(n2);
+		notificationService.deleteNotification(n.getId());
+		notificationManager.deleteNotification(n.getId());
+//		User user2 = userService.getUserByEmail("yaronshender@gmail.com");
+//		Notification n2 = new Notification();
+//		Event event2 = eventService.getEventById(130);
+//		n2.setUser(user2);
+//		n2.setEvent(event2);
+//		n2.setTiming(now.plusSeconds(10));
+//		notificationService.addNotification(n2, user2.getId(), event2.getId());
+//		
+//		notificationManager.addNotification(n2);
 
 	}
 
