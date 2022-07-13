@@ -14,8 +14,10 @@ import org.springframework.stereotype.Component;
 
 import ajbc.doodle.calendar.daos.DaoException;
 import ajbc.doodle.calendar.daos.EventDao;
+import ajbc.doodle.calendar.daos.NotificationDao;
 import ajbc.doodle.calendar.daos.UserDao;
 import ajbc.doodle.calendar.entities.Event;
+import ajbc.doodle.calendar.entities.Notification;
 import ajbc.doodle.calendar.entities.User;
 import ajbc.doodle.calendar.utils.JsonUtils;
 
@@ -26,6 +28,8 @@ public class UserService {
 	UserDao userDao;
 	@Autowired
 	EventDao eventDao;
+	@Autowired
+	NotificationDao notificationDao;
 	
 	public void addUser(User user) throws DaoException
 	{
@@ -102,8 +106,71 @@ public class UserService {
 		
 		userDao.updateUser(user);
 		
-		// TODO: deactivate user events and notifications
+		Set<Event> userEvents = user.getEvents();
 		
+		List<Notification> userNotifications = new ArrayList<>();
+		for (Event e: userEvents)
+		{
+			Set<Notification> eventNotifications = e.getNotifications();
+			for (Notification n: eventNotifications)
+				if (n.getUser().getId().equals(userId))
+					userNotifications.add(n);
+		}
+		userNotifications.forEach(t->{t.setIsActive(0); try {
+			notificationDao.updateNotification(t);
+		} catch (DaoException e1) {
+			e1.printStackTrace();
+		}});
+		
+		List<Event> userOwnedEvents = new ArrayList<>();
+		for (Event e: userEvents)
+		{
+			if (e.getOwner().getId().equals(userId))
+				userOwnedEvents.add(e);
+		}
+		userOwnedEvents.forEach(t->{t.setIsActive(0); try {
+			eventDao.updateEvent(t);
+		} catch (DaoException e1) {
+			e1.printStackTrace();
+		}});
+	}
+	
+	public void deleteUser(Integer userId) throws DaoException
+	{
+		User user = getUser(userId);
+
+		Set<Event> userEvents = user.getEvents();
+		
+		List<Notification> userNotifications = new ArrayList<>();
+		for (Event e: userEvents)
+		{
+			Set<Notification> eventNotifications = e.getNotifications();
+			for (Notification n: eventNotifications)
+				if (n.getUser().getId().equals(userId))
+					userNotifications.add(n);
+		}
+		userNotifications.forEach(t->{
+			try {
+				notificationDao.deleteNotification(t.getId());
+			} catch (DaoException e2) {
+				e2.printStackTrace();
+			}
+		});
+		
+		List<Event> userOwnedEvents = new ArrayList<>();
+		for (Event e: userEvents)
+		{
+			if (e.getOwner().getId().equals(userId))
+				userOwnedEvents.add(e);
+		}
+		userOwnedEvents.forEach(t->{
+			try {
+				eventDao.deleteEvent(t.getId());
+			} catch (DaoException e1) {
+				e1.printStackTrace();
+			}
+		});
+		userDao.deleteUser(userId);
 	}
 }
 

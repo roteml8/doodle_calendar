@@ -165,6 +165,20 @@ public class UserController {
 		}
 	}
 	
+	@RequestMapping(method = RequestMethod.DELETE, path="/{id}")
+	public ResponseEntity<?> deleteUser(@PathVariable Integer id) {
+		
+		try {
+			service.deleteUser(id);
+			return ResponseEntity.status(HttpStatus.OK).body("User was successfully deleted from db");
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to delete user in db");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+	
 	
 	@PostMapping("/subscribe/{email}")
 	@ResponseStatus(HttpStatus.CREATED)
