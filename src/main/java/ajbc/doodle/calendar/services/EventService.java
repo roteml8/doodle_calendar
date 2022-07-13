@@ -122,13 +122,33 @@ public class EventService {
 		return getEventsOfUserInRange(userId, now, end);
 	}
 	
-	public void deactivate(Integer eventId) throws DaoException
+	public void deactivateEvent(Integer eventId) throws DaoException
 	{
 		Event event = getEventById(eventId);
 		event.setIsActive(0);
-		//TODO: deactivate event notifications
+		
 		eventDao.updateEvent(event);
-			
+		
+		//TODO: deactivate event notifications
+		event.getNotifications().forEach(t->{t.setIsActive(0); try {
+			notificationDao.updateNotification(t);
+		} catch (DaoException e) {
+			e.printStackTrace();
+		}});		
+	}
+	
+	public void deleteEvent(Integer eventId) throws DaoException
+	{
+		Event event = getEventById(eventId);
+		Set<Notification> eventNotifications = event.getNotifications();
+		eventNotifications.forEach(t->{
+			try {
+				notificationDao.deleteNotification(t.getId());
+			} catch (DaoException e) {
+				e.printStackTrace();
+			}
+		});
+		eventDao.deleteEvent(eventId);
 	}
 	
 	public boolean doesUserExist(Integer userId)

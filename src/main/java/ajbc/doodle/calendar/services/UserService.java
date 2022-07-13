@@ -99,8 +99,11 @@ public class UserService {
 	{
 		User user = getUser(userId);
 		user.setIsActive(0);
-		// TODO: deactivate user events and notifications
+		
 		userDao.updateUser(user);
+		
+		// TODO: deactivate user events and notifications
+		
 	}
 }
 

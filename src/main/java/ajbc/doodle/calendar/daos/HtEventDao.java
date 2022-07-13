@@ -10,6 +10,7 @@ import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.stereotype.Component;
 
 import ajbc.doodle.calendar.entities.Event;
+import ajbc.doodle.calendar.entities.Notification;
 import ajbc.doodle.calendar.entities.User;
 
 @SuppressWarnings("unchecked")
@@ -52,6 +53,12 @@ public class HtEventDao implements EventDao{
 	@Override
 	public void updateEvent(Event event) throws DaoException {
 		template.merge(event);
+	}
+
+	@Override
+	public void deleteEvent(Integer eventId) throws DaoException {
+		Event event = getEvent(eventId);
+		template.delete(event);
 	}
 	
 	

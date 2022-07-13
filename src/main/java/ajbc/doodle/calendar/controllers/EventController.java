@@ -124,6 +124,36 @@ public class EventController {
 		}
 	}
 	
+	@RequestMapping(method = RequestMethod.PUT, path="/{eventId}/deactivate")
+	public ResponseEntity<?> deactivateEvent(@PathVariable Integer eventId) {
+		
+		try {
+			service.deactivateEvent(eventId);
+			Event event = service.getEventById(eventId);
+			JsonUtils.nullifyFieldsInEvent(event);
+			return ResponseEntity.status(HttpStatus.OK).body(event);
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to deactivate event in db");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.DELETE, path="/{eventId}")
+	public ResponseEntity<?> deleteEvent(@PathVariable Integer eventId) {
+		
+		try {
+			service.deleteEvent(eventId);
+			return ResponseEntity.status(HttpStatus.OK).body("Event was successfully deleted from db");
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to delete event in db");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+	
 	@RequestMapping(method = RequestMethod.GET, path="/{eventId}")
 	public ResponseEntity<?> getEventsById(@PathVariable Integer eventId) {
 		
