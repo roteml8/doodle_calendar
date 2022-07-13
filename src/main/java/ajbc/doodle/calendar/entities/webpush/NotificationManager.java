@@ -105,6 +105,7 @@ public class NotificationManager implements Runnable {
 			{
 				current = queue.poll();
 				User user = current.getUser();
+				// send only if the user is now logged in and the notification is marked active
 				if (user.getIsLogged()==1 && current.getIsActive()==1)
 				{
 					toSend.add(current);
@@ -112,7 +113,8 @@ public class NotificationManager implements Runnable {
 
 				current = queue.peek();
 
-			} while (current!=null && current.getTiming().equals(first.getTiming()));
+				// keep collecting all messages with the same time
+			} while (current!=null && current.getTiming().equals(first.getTiming())); 
 			
 			toSend.forEach(t->pool.execute(new NotificationThread(t, mps, notificationService)));
 		}
