@@ -81,6 +81,22 @@ public class NotificationService {
 		notificationDao.updateNotification(notification);		
 	}
 	
+	@Transactional
+	public List<Notification> updatedNotifications(List<Notification> notifications) throws DaoException
+	{
+		List<Notification> updatedNotifications = new ArrayList<>();
+		notifications.forEach(t->{
+			try {
+				updateNotification(t,t.getUser().getId());
+				t = getNotificationById(t.getId());
+				updatedNotifications.add(t);
+			} catch (DaoException e) {
+				e.printStackTrace();
+			}
+		});
+		return updatedNotifications;
+	}
+	
 	public List<Notification> getNotificationsByUserEmail(String email) throws DaoException
 	{
 		User user = userDao.getUserByEmail(email);
@@ -133,8 +149,32 @@ public class NotificationService {
 		notificationDao.updateNotification(notification);
 	}
 	
+	@Transactional
+	public void deactivateNotifications(List<Integer> notificationIds) throws DaoException
+	{
+		notificationIds.forEach(t->{
+			try {
+				deactivateNotification(t);
+			} catch (DaoException e) {
+				e.printStackTrace();
+			}
+		});
+	}
+	
 	public void deleteNotification(Integer notificationId) throws DaoException
 	{
 		notificationDao.deleteNotification(notificationId);
+	}
+	
+	@Transactional
+	public void deleteNotifications(List<Integer> notificationIds) throws DaoException
+	{
+		notificationIds.forEach(t->{
+			try {
+				deleteNotification(t);
+			} catch (DaoException e) {
+				e.printStackTrace();
+			}
+		});
 	}
 }

@@ -134,6 +134,22 @@ public class NotificationController {
 		}
 	}
 	
+	@RequestMapping(method = RequestMethod.PUT)
+	public ResponseEntity<?> updateNotifications(@RequestBody List<Notification> notifications) {
+		
+		try {
+			notifications = service.updatedNotifications(notifications);
+			notifications.forEach(t->notificationManager.addNotification(t));
+			JsonUtils.nullifyFieldsInNotificationList(notifications);
+			return ResponseEntity.status(HttpStatus.OK).body(notifications);
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to update notifications in db");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+	
 	@RequestMapping(method = RequestMethod.PUT, path="/{notificationId}/deactivate")
 	public ResponseEntity<?> deactivateNotification(@PathVariable Integer notificationId) {
 		
@@ -151,6 +167,21 @@ public class NotificationController {
 		}
 	}
 	
+	@RequestMapping(method = RequestMethod.PUT, path="/deactivate")
+	public ResponseEntity<?> deactivateNotifications(@RequestBody List<Integer> notificationIds) {
+		
+		try {
+			service.deactivateNotifications(notificationIds);
+			notificationIds.forEach(t->notificationManager.deleteNotification(t));
+			return ResponseEntity.status(HttpStatus.OK).body("Notifications were successfully deactivated");
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to deactivate notifications in db");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+	
 	@RequestMapping(method = RequestMethod.DELETE, path="/{notificationId}")
 	public ResponseEntity<?> deleteNotification(@PathVariable Integer notificationId) {
 		
@@ -162,6 +193,21 @@ public class NotificationController {
 			ErrorMessage errorMessage = new ErrorMessage();
 			errorMessage.setData(e.getMessage());
 			errorMessage.setMessage("failed to delete notification in db");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.DELETE)
+	public ResponseEntity<?> deleteNotifications(@RequestBody List<Integer> notificationIds) {
+		
+		try {
+			service.deleteNotifications(notificationIds);
+			notificationIds.forEach(t->notificationManager.deleteNotification(t));
+			return ResponseEntity.status(HttpStatus.OK).body("Notifications were successfully deleted");
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to delete notifications in db");
 			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
 		}
 	}
