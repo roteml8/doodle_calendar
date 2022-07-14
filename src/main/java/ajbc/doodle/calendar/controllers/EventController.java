@@ -29,8 +29,10 @@ import ajbc.doodle.calendar.entities.User;
 import ajbc.doodle.calendar.services.EventService;
 import ajbc.doodle.calendar.utils.JsonUtils;
 
-/*
+/**
  * Controller that implements the API for Events
+ * @author Rotem
+ *
  */
 
 @RequestMapping("/events")
